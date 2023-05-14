@@ -1,0 +1,23 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "type": "shell",
+            "command": "cl.exe",
+            "args": [
+                "/EHsc",
+                "/I",
+                "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.x.x\\um",
+                "/link",
+                "/LIBPATH:C:\\Program Files (x86)\\Windows Kits\\10\\Lib\\10.0.x.x\\um",
+                "/OUT:output.exe",
+                "*.c"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}

@@ -1,0 +1,12 @@
+{
+    "name": "EDR C",
+    "type": "cppdbg",
+    "request": "launch",
+    "program": "${fileDirname}\\${fileBasenameNoExtension}.exe",
+    "args": [],
+    "stopAtEntry": false,
+    "cwd": "${workspaceFolder}",
+    "environment": [],
+    "externalConsole": true,
+    "MIMode": "gdb",
+}
