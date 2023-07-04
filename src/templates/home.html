@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Datashield</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+    <div>
+        <button class="btn btn-success" onclick="chamarFuncaoEspecifica()">Monitorar sistema123123</button>
+        <br>
+        <br>
+        <span id="retorno"></span>
+        <a href="/sobre"></a>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul class="flash-messages">
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+    </div>
+    <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
+    <script>
+        function chamarFuncaoEspecifica() {
+            
+            fetch('/api/teste')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("retorno").innerHTML = data.message;
+                });
+                
+        }
+    </script>
+</body>
+
+</html>
