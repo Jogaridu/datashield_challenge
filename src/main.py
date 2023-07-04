@@ -1,30 +1,46 @@
-# from services import monitorar_portas
-
-# portas_em_uso = monitorar_portas.iniciar()
-
-# # Imprime as portas abertas
-# # Imprime as portas em uso e seus respectivos processos
-# print("Portas em uso na máquina local:")
-# for porta, processo in portas_em_uso:
-#     print(f"Porta: {porta} | Processo: {processo}")
-
 import webview
-import os
+import requests
+import time
+from flask import Flask
+from multiprocessing import Process
 
-def main():
+from routes.rotas import rotas
+from controllers.home import home
 
-    # Obtém o caminho absoluto do arquivo HTML
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    html_file_path = os.path.join(current_dir, 'views', 'index.html')
-    
-    # Cria uma janela com WebView
-    window = webview.create_window("Datashield", 'http://127.0.0.1:5500/src/views/index.html')
-    
-    # Carrega o arquivo HTML local
-    # window.load_url('file://' + html_file_path)
-    
-    # Executa a janela
+app = Flask(__name__, static_folder='static')
+app.secret_key = 'datashield'
+
+app.register_blueprint(rotas)
+app.register_blueprint(home)
+
+
+def waitUntilServerReady():
+    while True:
+        try:
+            response = requests.get('http://localhost:5000/')
+            if response.status_code == 200:
+                break
+        except requests.exceptions.ConnectionError:
+            pass
+        time.sleep(1)
+
+
+def iniciar_aplicacao():
+    waitUntilServerReady()
+    webview.create_window("Datashield", 'http://localhost:5000/')
     webview.start()
 
+
+def iniciar_flask():
+    app.run()
+
+
 if __name__ == '__main__':
-    main()
+    flask_process = Process(target=iniciar_flask)
+    webview_process = Process(target=iniciar_aplicacao)
+
+    flask_process.start()
+    webview_process.start()
+
+    flask_process.join()
+    webview_process.join()
