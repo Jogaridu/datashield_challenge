@@ -1,5 +1,10 @@
 from flask import Blueprint
-from models.monitorar_processos import monitorar_processos
+import sys
+import os
+
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'models'))
+
+# from monitorar_processos import iniciar
 
 home = Blueprint('home', __name__)
 
@@ -7,7 +12,7 @@ home = Blueprint('home', __name__)
 @home.route('/api/teste')
 def api_teste():
 
-    # monitorar_processos()
+    # iniciar()
     data = {'message': 'Monitoramento ligado!'}
 
     return data

@@ -8,7 +8,7 @@ def verifica_processo_alterando_arquivos(processo_pid):
     return len(arquivos_abertos) > 100
 
 
-def monitorar_processos():
+def iniciar():
     # Dicionário para rastrear os processos atuais
     processos_atuais = {}
 

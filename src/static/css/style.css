@@ -11,3 +11,7 @@ div {
     outline: none;
     box-shadow: none;
 }
+
+div {
+    background-color: red;
+}
