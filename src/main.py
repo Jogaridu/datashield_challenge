@@ -1,9 +1,9 @@
-from multiprocessing import Process
 import subprocess
 import os
 
 def iniciar_aplicacao():
-    
+
+    # Import de banco de dados
     venv = os.path.join(os.path.dirname(__file__), '..', 'venv', 'Scripts', 'python.exe')
 
     flask_command = subprocess.Popen([venv, ".\src\server.py"])
