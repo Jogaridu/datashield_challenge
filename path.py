@@ -15,4 +15,3 @@ git.Repo.clone_from(url_repo, caminho)
 
 print(f"Repositório clonado em: {caminho}")
 
-#aasasds
