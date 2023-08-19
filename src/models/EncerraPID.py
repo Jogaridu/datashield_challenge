@@ -33,3 +33,5 @@ try:
     print(f"Processo com PID {pid_para_encerrar} encerrado com sucesso.")
 except subprocess.CalledProcessError:
     print(f"Não foi possível encerrar o processo com PID {pid_para_encerrar}.")
+
+# teste teste
