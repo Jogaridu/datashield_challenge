@@ -55,7 +55,7 @@ def analise_instancia(pid, processo):
         print(f"Análise do processo: '{processo.Name}':")
 
         if (processo_registrado['status'] == 'ameaça'):
-            os.kill(pid, signal.SIGKILL)
+            os.kill(pid, signal.SIGILL)
 
         if (processo_registrado['status'] == 'suspeito'):
             print('PROCESSO SUSPEITO', processo_registrado['nomeProcesso'])
