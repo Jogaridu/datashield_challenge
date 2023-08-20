@@ -29,159 +29,195 @@ MAX_THREAD_COUNT = 20
 MAX_PRIORITY = 12
 MAX_PRIVATE_PAGE_COUNT = 70000000
 
+class Monitoramento:
 
-def iniciar():
-    c = wmi.WMI(privileges=["Security"])
-    process_watcher = c.Win32_Process.watch_for("creation")
-
-    print("Observando novos processos... Pressione Ctrl+C para sair.")
-    
-    try:
-        while True:
-            new_process = process_watcher()
-            print(new_process)
-            analise_instancia(new_process.ProcessId, new_process)
-    except KeyboardInterrupt:
-        pass
+    def __init__(self):
+        self.monitoramento_ativo = False
 
 
-def analise_instancia(pid, processo):
+    def parar(self):
+        self.monitoramento_ativo = False
 
-    processo_registrado = colecao_processos.find_one({"nomeProcesso": processo.Name})
+ 
+    def iniciar(self):
 
-    if (processo_registrado):
-        
-        print('--------- PROCESSO MAPEADO ---------')
-        print(f"Análise do processo: '{processo.Name}':")
+        c = wmi.WMI(privileges=["Security"])
+        process_watcher = c.Win32_Process.watch_for("creation")
+        self.monitoramento_ativo = True
 
-        if (processo_registrado['status'] == 'ameaça'):
+        print("Observando novos processos... Pressione Ctrl+C para sair.")
+
+        try:
+            while self.monitoramento_ativo:
+                new_process = process_watcher()
+                print(new_process)
+
+                self.analise_instancia(new_process.ProcessId, new_process)
+        except KeyboardInterrupt:
+            pass
+
+
+    def analise_instancia(self, pid, processo):
+
+        processo_registrado = colecao_processos.find_one({"nomeProcesso": processo.Name})
+
+        if (processo_registrado):
+            
+            print('--------- PROCESSO MAPEADO ---------')
+            print(f"Análise do processo: '{processo.Name}':")
+
+            if (processo_registrado['status'] == 'ameaça'):
+                os.kill(pid, signal.SIGILL)
+
+            if (processo_registrado['status'] == 'suspeito'):
+                print('PROCESSO SUSPEITO', processo_registrado['nomeProcesso'])
+            
+        else: 
+
+            print('--------- NOVO PROCESSO ENCONTRADO ---------')
+            print(f"Análise do processo: '{processo.Name}':")
+            # Estrutura de análise
+            # dados_analise = {
+            #     "handleCount": 0,
+            #     "pageFaults": 0,
+            #     "pageFileUsage": 0,
+            #     "peakPageFileUsage": 0,
+            #     "workingSetSize": 0,
+            #     "threadCount": 0,
+            #     "priority": 0,
+            #     "privatePageCount": 0
+            # }
+
+            # dados_analise["handleCount"] = int(int(processo.handleCount) > MAX_HANDLE_COUNT)
+            # dados_analise["pageFaults"] = int(int(processo.pageFaults) > MAX_PAGE_FAULTS)
+            # dados_analise["pageFileUsage"] = int(int(processo.pageFileUsage) > MAX_PAGE_FILE_USAGE)
+            # dados_analise["peakPageFileUsage"] = int(int(processo.peakPageFileUsage) > MAX_PEAK_PAGE_FILE_USAGE)
+            # dados_analise["workingSetSize"] = int(int(processo.workingSetSize) > MAX_WORKING_SET_SIZE)
+            # dados_analise["threadCount"] = int(int(processo.threadCount) > MAX_THREAD_COUNT)
+            # dados_analise["priority"] = int(int(processo.priority) > MAX_PRIORITY)
+            # dados_analise["privatePageCount"] = int(int(processo.privatePageCount) > MAX_PRIVATE_PAGE_COUNT)
+            try:
+                processo_analise = psutil.Process(pid) 
+                
+                dados_analise = {
+                    "handleCount": int(int(processo_analise.num_handles()) > MAX_HANDLE_COUNT),
+                    "pageFaults": int(int(processo_analise.memory_info().num_page_faults) > MAX_PAGE_FAULTS),
+                    "pageFileUsage": int(int(processo_analise.memory_info().pagefile) > MAX_PAGE_FILE_USAGE),
+                    "peakPageFileUsage": int(int(processo_analise.memory_info().peak_pagefile) > MAX_PEAK_PAGE_FILE_USAGE),
+                    "workingSetSize": int(int(processo_analise.memory_info().rss) > MAX_WORKING_SET_SIZE),
+                    "threadCount": int(int(processo_analise.num_threads()) > MAX_THREAD_COUNT),
+                    "priority": int(int(processo.Priority) > MAX_PRIORITY),
+                    "privatePageCount": int(int(processo_analise.memory_info().private) > MAX_PRIVATE_PAGE_COUNT)
+                }
+
+                dados_processo = {
+                    "handleCount": processo_analise.num_handles(),
+                    "pageFaults": processo_analise.memory_info().num_page_faults,
+                    "pageFileUsage": processo_analise.memory_info().pagefile,
+                    "peakPageFileUsage": processo_analise.memory_info().peak_pagefile,
+                    "workingSetSize": processo_analise.memory_info().rss,
+                    "threadCount": processo_analise.num_threads(),
+                    "priority": processo.Priority,
+                    "privatePageCount": processo_analise.memory_info().private
+                }
+
+                # Validação inicial caso o processo seja muito malígno
+                status = self.validarResultados(pid, dados_analise)
+
+                if (status == 'ameaça'):
+                    print(f"O Processo {processo.Name} é uma AMEAÇA.")
+
+                else:
+
+                    # Loop de avaliação por dois segundos
+                    tempo_inicio = time.time()
+                    dados_analise = []
+                    dados_processo_durante = []
+
+                    while time.time() - tempo_inicio < 2:
+                            
+                        processo_analise = psutil.Process(pid)
+
+                        # Análise
+                        obj_boolean = {}
+                        obj_processo = {}
+
+                        obj_boolean["handleCount"] = int(int(processo_analise.num_handles()) > MAX_HANDLE_COUNT)
+                        obj_boolean["pageFaults"] = int(int(processo_analise.memory_info().num_page_faults) > MAX_PAGE_FAULTS)
+                        obj_boolean["pageFileUsage"] = int(int(processo_analise.memory_info().pagefile) > MAX_PAGE_FILE_USAGE)
+                        obj_boolean["peakPageFileUsage"] = int(int(processo_analise.memory_info().peak_pagefile) > MAX_PEAK_PAGE_FILE_USAGE)
+                        obj_boolean["workingSetSize"] = int(int(processo_analise.memory_info().rss) > MAX_WORKING_SET_SIZE)
+                        obj_boolean["threadCount"] = int(int(processo_analise.num_threads()) > MAX_THREAD_COUNT)
+                        obj_boolean["priority"] = int(int(processo.Priority) > MAX_PRIORITY)
+                        obj_boolean["privatePageCount"] = int(int(processo_analise.memory_info().private) > MAX_PRIVATE_PAGE_COUNT)
+
+                        obj_processo["handleCount"] = processo_analise.num_handles()
+                        obj_processo["pageFaults"] = processo_analise.memory_info().num_page_faults
+                        obj_processo["pageFileUsage"] = processo_analise.memory_info().pagefile
+                        obj_processo["peakPageFileUsage"] = processo_analise.memory_info().peak_pagefile
+                        obj_processo["workingSetSize"] = processo_analise.memory_info().rss
+                        obj_processo["threadCount"] = processo_analise.num_threads()
+                        obj_processo["priority"] = processo.Priority
+                        obj_processo["privatePageCount"] = processo_analise.memory_info().private
+
+                        dados_analise.append(obj_boolean)
+                        dados_processo_durante.append(obj_processo)
+
+                        status = self.validarResultados(pid, obj_boolean)
+
+                        if (status == 'ameaça'):
+                            break
+
+                        time.sleep(0.5)
+
+
+                colecao_analise.insert_one({
+                    'nomeProcesso': processo.Name,
+                    'pid': pid,
+                    'dadosAnalise': dados_analise,
+                    'dadosProcessoDurante': dados_processo_durante,
+                    'dadosProcesso': dados_processo,
+                    'status': status
+                })
+
+                # Salvar para análise no banco
+                colecao_processos.insert_one({
+                    'nomeProcesso': processo.Name,
+                    'pid': pid,
+                    'dadosAnalise': dados_analise,
+                    'dadosProcesso': dados_processo,
+                    'status': status
+                })
+
+            except psutil.NoSuchProcess:
+                print("Processo não encontrado.")
+
+            except PermissionError:
+                print(f"Erro de permissão. Continuando a execução do programa.")
+
+
+    def validarResultados(self, pid, resultados):
+
+        retorno = ''
+
+        if sum(resultados.values()) > 4:
+
+            retorno = 'ameaça'
+
             os.kill(pid, signal.SIGILL)
 
-        if (processo_registrado['status'] == 'suspeito'):
-            print('PROCESSO SUSPEITO', processo_registrado['nomeProcesso'])
-          
-    else: 
-        print('--------- NOVO PROCESSO ENCONTRADO ---------')
-        print(f"Análise do processo: '{processo.Name}':")
+            print(f"AMEAÇA NEUTRALIZADA.")
 
-        # Estrutura de análise
-        # dados_analise = {
-        #     "handleCount": 0,
-        #     "pageFaults": 0,
-        #     "pageFileUsage": 0,
-        #     "peakPageFileUsage": 0,
-        #     "workingSetSize": 0,
-        #     "threadCount": 0,
-        #     "priority": 0,
-        #     "privatePageCount": 0
-        # }
+        elif sum(resultados.values()) > 2:
 
-        # dados_analise["handleCount"] = int(int(processo.handleCount) > MAX_HANDLE_COUNT)
-        # dados_analise["pageFaults"] = int(int(processo.pageFaults) > MAX_PAGE_FAULTS)
-        # dados_analise["pageFileUsage"] = int(int(processo.pageFileUsage) > MAX_PAGE_FILE_USAGE)
-        # dados_analise["peakPageFileUsage"] = int(int(processo.peakPageFileUsage) > MAX_PEAK_PAGE_FILE_USAGE)
-        # dados_analise["workingSetSize"] = int(int(processo.workingSetSize) > MAX_WORKING_SET_SIZE)
-        # dados_analise["threadCount"] = int(int(processo.threadCount) > MAX_THREAD_COUNT)
-        # dados_analise["priority"] = int(int(processo.priority) > MAX_PRIORITY)
-        # dados_analise["privatePageCount"] = int(int(processo.privatePageCount) > MAX_PRIVATE_PAGE_COUNT)
-        try:
-            processo_analise = psutil.Process(pid) 
-            
-            dados_analise = {
-                "handleCount": int(int(processo_analise.num_handles()) > MAX_HANDLE_COUNT),
-                "pageFaults": int(int(processo_analise.memory_info().num_page_faults) > MAX_PAGE_FAULTS),
-                "pageFileUsage": int(int(processo_analise.memory_info().pagefile) > MAX_PAGE_FILE_USAGE),
-                "peakPageFileUsage": int(int(processo_analise.memory_info().peak_pagefile) > MAX_PEAK_PAGE_FILE_USAGE),
-                "workingSetSize": int(int(processo_analise.memory_info().rss) > MAX_WORKING_SET_SIZE),
-                "threadCount": int(int(processo_analise.num_threads()) > MAX_THREAD_COUNT),
-                "priority": int(int(processo.Priority) > MAX_PRIORITY),
-                "privatePageCount": int(int(processo_analise.memory_info().private) > MAX_PRIVATE_PAGE_COUNT)
-            }
-
-            dados_processo = {
-                "handleCount": processo_analise.num_handles(),
-                "pageFaults": processo_analise.memory_info().num_page_faults,
-                "pageFileUsage": processo_analise.memory_info().pagefile,
-                "peakPageFileUsage": processo_analise.memory_info().peak_pagefile,
-                "workingSetSize": processo_analise.memory_info().rss,
-                "threadCount": processo_analise.num_threads(),
-                "priority": processo.Priority,
-                "privatePageCount": processo_analise.memory_info().private
-            }
-
-            # Validação inicial caso o processo seja muito malígno
-            status = validarResultados(pid, dados_analise)
-
-            if (status == 'ameaça'):
-                print(f"O Processo {processo.Name} é uma AMEAÇA.")
-
-            else:
-
-                # Loop de avaliação por dois segundos
-                tempo_inicio = time.time()
-                dados_analise = []
-                dados_processo_durante = []
-
-                while time.time() - tempo_inicio < 2:
-                        
-                    processo_analise = psutil.Process(pid)
-
-                    # Análise
-                    obj_boolean = {}
-                    obj_processo = {}
-
-                    obj_boolean["handleCount"] = int(int(processo_analise.num_handles()) > MAX_HANDLE_COUNT)
-                    obj_boolean["pageFaults"] = int(int(processo_analise.memory_info().num_page_faults) > MAX_PAGE_FAULTS)
-                    obj_boolean["pageFileUsage"] = int(int(processo_analise.memory_info().pagefile) > MAX_PAGE_FILE_USAGE)
-                    obj_boolean["peakPageFileUsage"] = int(int(processo_analise.memory_info().peak_pagefile) > MAX_PEAK_PAGE_FILE_USAGE)
-                    obj_boolean["workingSetSize"] = int(int(processo_analise.memory_info().rss) > MAX_WORKING_SET_SIZE)
-                    obj_boolean["threadCount"] = int(int(processo_analise.num_threads()) > MAX_THREAD_COUNT)
-                    obj_boolean["priority"] = int(int(processo.Priority) > MAX_PRIORITY)
-                    obj_boolean["privatePageCount"] = int(int(processo_analise.memory_info().private) > MAX_PRIVATE_PAGE_COUNT)
-
-                    obj_processo["handleCount"] = processo_analise.num_handles()
-                    obj_processo["pageFaults"] = processo_analise.memory_info().num_page_faults
-                    obj_processo["pageFileUsage"] = processo_analise.memory_info().pagefile
-                    obj_processo["peakPageFileUsage"] = processo_analise.memory_info().peak_pagefile
-                    obj_processo["workingSetSize"] = processo_analise.memory_info().rss
-                    obj_processo["threadCount"] = processo_analise.num_threads()
-                    obj_processo["priority"] = processo.Priority
-                    obj_processo["privatePageCount"] = processo_analise.memory_info().private
-
-                    dados_analise.append(obj_boolean)
-                    dados_processo_durante.append(obj_processo)
-
-                    status = validarResultados(pid, obj_boolean)
-
-                    if (status == 'ameaça'):
-                        break
-
-                    time.sleep(0.5)
+            retorno = 'suspeito'
+            print(f"Processo SUSPEITO devido a valores ultrapassados. SOB ANÁLISE")
 
 
-            colecao_analise.insert_one({
-                'nomeProcesso': processo.Name,
-                'pid': pid,
-                'dadosAnalise': dados_analise,
-                'dadosProcessoDurante': dados_processo_durante,
-                'dadosProcesso': dados_processo,
-                'status': status
-            })
+        else:
+            retorno = 'seguro'
 
-            # Salvar para análise no banco
-            colecao_processos.insert_one({
-                'nomeProcesso': processo.Name,
-                'pid': pid,
-                'dadosAnalise': dados_analise,
-                'dadosProcesso': dados_processo,
-                'status': status
-            })
-
-        except psutil.NoSuchProcess:
-            print("Processo não encontrado.")
-
-        except PermissionError:
-            print(f"Erro de permissão. Continuando a execução do programa.")
+        return retorno
 
 
 def validarResultados(pid, resultados):
@@ -208,7 +244,7 @@ def validarResultados(pid, resultados):
     return retorno
 
 
-iniciar()
+#iniciar()
 
 # CÓDIGO ABAIXO É PARA AVALIAR RESULTADOS DO MONGODB
 colecao_processos.find()

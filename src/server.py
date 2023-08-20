@@ -21,5 +21,5 @@ app.register_blueprint(home)
 if __name__ == '__main__': 
     # server = make_server('localhost', 5000, app)
     # server.serve_forever()
-    app.run(debug=True)
+    app.run()
     # server.serve()
