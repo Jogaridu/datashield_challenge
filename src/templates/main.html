@@ -9,16 +9,20 @@
   </head>
   <body>
     <header class="cabecalho">
-      <h1 class="ds">DATASHIELD</h1>
+      <div class="cabecalho_logo">
+        <img class="logo" style="margin: 0px 10px 0px 7px;" src="../static/assets/logo-ds.svg" alt="">
+        <h1>DATASHIELD</h1>
+      </div>
+
       <div id="menu" class="menu">
-        <img src="datashield/icons/iconmenu.svg" id="menu-btn" class="menu-icon" alt="" />
+        <img src="../static/assets/iconmenu.svg" id="menu-btn" class="menu-icon" alt="" />
         <ul id="menu-content" class="menu-content">
-            <li>
-                <img src="datashield/icons/iconhome.png" alt="">
+            <li style="margin: 15px 10px 0px 0px;">
+                <img src="../static/assets/iconhome.png" alt="">
                 <p>Home</p>
             </li>
-            <li>
-                <img src="datashield/icons/iconprocess.png" alt="">
+            <li style="margin: 5px 10px 0px 0px;" >
+                <img src="../static/assets/iconprocess.png" alt="">
                 <p>Processos</p>
             </li>
         </ul>
@@ -34,28 +38,28 @@
         <div class="card-group">
           <div class="row">
             <div class="card card-green">
-              <img class="icon" src="datashield/icons/icononda.png" alt="" />
+              <img class="icon" src="../static/assets/icononda.png" alt="" />
               <h4>02 de outubro</h4>
               <p>Última análise do sistema</p>
             </div>
             <div class="card">
-              <img class="icon" src="datashield/icons/iconpasta.png" alt="" />
+              <img class="icon" src="../static/assets/iconpasta.png" alt="" />
               <h4>142</h4>
               <p>Processos analisados</p>
             </div>
           </div>
           <div class="row">
             <div class="card">
-              <img class="icon" src="datashield/icons/iconstatus.png" alt="" />
+              <img class="icon" src="../static/assets/iconstatus.png" alt="" />
               <h3 class="status">Seguro</h3>
               <p>Status</p>
             </div>
             <div class="card card-outline">
-              <img class="icon" src="datashield/icons/iconscan.png" alt="" />
-              <h4>Processos encerrados</h4>
+              <img class="icon" src="../static/assets/iconscan.png" alt="" />
+              <h4 style="width:max-content;" >Processos encerrados</h4>
               <div class="more">
                 <p>Ver mais</p>
-                <img src="datashield/icons/iconseta.png" alt="" />
+                <img src="../static/assets/iconseta.png" alt="" />
               </div>
             </div>
           </div>
@@ -63,10 +67,10 @@
       </div>
 
       <div class="card-monitoramento-container">
-        <img src="datashield/robo.png" class="robo-img" alt="" />
+        <img src="../static/assets/robo.png" class="robo-img" alt="" />
         <div class="card">
-          <div style="margin-top: 20px;">
-            <h4>Ative o monitoramento</h4>
+          <div style="margin-top: 10px;">
+            <h4 style="width:max-content;">Ative o monitoramento</h4>
             <p>Sua segurança está em risco</p>
             <label class="switch">
               <input id="checkbox" type="checkbox" />
@@ -76,7 +80,7 @@
           <img
             id="bola-img"
             class="monitoramento-img"
-            src="datashield/bola.png"
+            src="../static/assets/bola.png"
             alt=""
           />
         </div>
@@ -90,9 +94,9 @@
 
     checkbox.addEventListener("click", () => {
       if (!checkbox.checked) {
-        bola.src = "datashield/bola.png";
+        bola.src = "../static/assets/bola.png";
       } else if (checkbox.checked) {
-        bola.src = "datashield/bola-verde.png";
+        bola.src = "../static/assets/bola-verde.png";
       }
     });
 

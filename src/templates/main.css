@@ -11,9 +11,8 @@ body {
 
 @font-face {
   font-family: "myfont";
-  src: url(datashield/fonts/Helvetica-Bold.woff) format("woff");
-  font-weight: bold;
-  font-style: italic;
+  src: url(../static/assets/FuturaLT-Bold.woff) format("woff");
+  font-weight: 900;
 }
 
 h1 {
@@ -33,29 +32,35 @@ h1 {
   padding: 20px 70px;
 }
 
+.cabecalho_logo{
+  display: flex;
+  
+}
+
+
 .menu {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   border-radius: 20px;
-  padding: 20px;
-
+  padding: 20px 30px 30px 30px;
 }
 
 .opened {
     background-color: #171717;
-    
 }
 
 .menu-icon{
     cursor: pointer;
 }
 
+
+
 .menu-content {
   display: none;
   list-style: none;
   flex-direction: column;
-  gap: 16px;
+  gap: 15px;
 
 }
 
@@ -151,7 +156,7 @@ h3 {
 
 .card h4 {
   text-transform: uppercase;
-  font-weight: bold;
+  font-family: "myfont";
   font-size: 16px;
 }
 
@@ -162,6 +167,7 @@ h3 {
 .status {
   display: flex;
   align-items: center;
+  width: 90px;
 }
 
 .status::before {
@@ -190,8 +196,13 @@ h3 {
 }
 
 .robo-img {
-  width: 240px;
+  width: 230px;
 }
+
+p{
+  font-family: Arial, Helvetica, sans-serif;
+}
+
 
 .card-monitoramento-container .card {
   width: 100%;
@@ -201,7 +212,9 @@ h3 {
 }
 
 .monitoramento-img {
-  width: 160px;
+  width: 150px;
+  height: 150px;
+  margin-top: 30px;
 }
 
 /* slider */
