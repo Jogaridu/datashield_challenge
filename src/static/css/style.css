@@ -17,6 +17,21 @@ body {
     background-color: black;
 }
 
+.cabecalho_logo {
+    height: 60px;
+    display: flex;
+    align-items: center;
+}
+
+h1 {
+    color: #ffffff;
+}
+
+.logo {
+    margin-right: 15px;
+    width: 35px;
+}
+
 .container {
     height: 100vh;
     width: 1024px;
