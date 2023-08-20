@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DATASHIELD</title>
+    <link rel="stylesheet" href="../static/css/reset.css" />
+    <link rel="stylesheet" href="../static/css/interface.css" />
+  </head>
+  <body>
+    <header class="cabecalho">
+      <div class="cabecalho_logo">
+        <img class="logo" src="../static/assets/images/logo-ds.svg" alt="">
+        <h1>DATASHIELD</h1>
+      </div>
+
+      <div id="menu" class="menu">
+        <img src="../static/assets/images/iconmenu.svg" id="menu-btn" class="menu-icon" alt="" />
+        <ul id="menu-content" class="menu-content">
+            <li style="margin-top: 15px;">
+                <img class="menu-icon"  src="../static/assets/images/iconhome.png" alt="">
+                <p style="font-family: Arial, Helvetica, sans-serif;">Home</p>
+            </li>
+            <li>
+                <img class="menu-icon"  src="../static/assets/images/iconprocess.png" alt="">
+                <p style="font-family: Arial, Helvetica, sans-serif;">Processos</p>
+            </li>
+        </ul>
+      </div>
+    </header>
+
+    <main class="main">
+      <div style="margin-bottom: 45px;">
+        <h2>
+          Ei, <span class="name">Jorge.</span>
+          <span class="second-line"> Estamos protegendo você. </span>
+        </h2>
+        <div class="card-group">
+          <div class="row">
+            <div class="card card-green">
+              <img class="icon" src="../static/assets/images/icononda.png" alt="" />
+              <h4>02 de outubro</h4>
+              <p>Última análise do sistema</p>
+            </div>
+            <div class="card">
+              <img class="icon" src="../static/assets/images/iconpasta.png" alt="" />
+              <h4>142</h4>
+              <p>Processos analisados</p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="card">
+              <img class="icon" src="../static/assets/images/iconstatus.png" alt="" />
+              <h3 class="status">Seguro</h3>
+              <p>Status</p>
+            </div>
+            <div class="card card-outline">
+              <img class="icon" src="../static/assets/images/iconscan.png" alt="" />
+              <h4 style="width:max-content;" >Processos encerrados</h4>
+              <div class="more">
+                <p>Ver mais</p>
+                <img src="../static/assets/images/iconseta.png" alt="" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-monitoramento-container">
+        <img src="../static/assets/images/robo.png" class="robo-img" alt="" />
+        <div class="card">
+          <div style="margin-top: 20px;">
+            <h4 style="width:max-content;">Ative o monitoramento</h4>
+            <p>Sua segurança está em risco</p>
+            <label class="switch">
+              <input id="checkbox" type="checkbox" />
+              <span class="slider round"></span>
+            </label>
+          </div>
+          <img
+            id="bola-img"
+            class="monitoramento-img"
+            src="../static/assets/images/bola.png"
+            alt=""
+          />
+        </div>
+      </div>
+    </main>
+  </body>
+
+  <script>
+    const checkbox = document.querySelector("#checkbox");
+    const bola = document.querySelector("#bola-img");
+
+    checkbox.addEventListener("click", () => {
+      if (!checkbox.checked) {
+        bola.src = "../static/assets/images/bola.png";
+      } else if (checkbox.checked) {
+        bola.src = "../static/assets/images/bola-verde.png";
+      }
+    });
+
+    const menuBtn = document.querySelector("#menu-btn")
+    const menu = document.querySelector("#menu")
+    const menuContent = document.querySelector("#menu-content")
+
+    menuBtn.addEventListener("click",()=>{
+      menuContent.classList.toggle("show")
+      menu.classList.toggle("opened")
+    })
+  </script>
+</html>
