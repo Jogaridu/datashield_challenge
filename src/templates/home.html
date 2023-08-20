@@ -4,13 +4,12 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DATASHIELD</title>
-    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/reset.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"> -->
-    <link rel="stylesheet" href="../static/css/reset.css">
-    <!-- <link rel="stylesheet" href="../static/bootstrap/css/bootstrap-grid.min.css"> -->
-    <link rel="stylesheet" href="../static/css/style.css">
-    <link rel="stylesheet" href="../static/css/animations.css">
+    <title>Datashield</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/reset.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}">
+
 </head>
 
 <body>
@@ -19,78 +18,84 @@
 
         <header>
             <div class="cabecalho_logo">
-                <img class="logo" src="../static/assets/logo-ds.svg" alt="">
+                <img class="logo" src="{{ url_for('static', filename='assets/logo-ds.svg') }}" alt="">
                 <h1>DATASHIELD</h1>
             </div>
             <div id="menu" class="menu">
-                <img src="../static/assets/images/iconmenu.svg" id="menu-btn" class="menu-icon" alt="" />
+                <img src="{{ url_for('static', filename='assets/images/iconmenu.svg') }}" id="menu-btn"
+                    class="menu-icon" alt="" />
                 <ul id="menu-content">
                     <li>
-                        <img src="../static/assets/images/iconhome.png" alt="">
+                        <img src="{{ url_for('static', filename='assets/images/iconhome.png') }}" alt="">
                         <p>Home</p>
                     </li>
                     <li>
-                        <img src="../static/assets/images/iconprocess.png" alt="">
+                        <img src="{{ url_for('static', filename='assets/images/iconprocess.png') }}" alt="">
                         <p>Processos</p>
                     </li>
                 </ul>
             </div>
         </header>
-    
+
         <main class="main">
             <div>
                 <h2 class="title">
-                    Ei, <span> Jorge.</span>
-                    <br> Estamos protegendo você.
+                    Ei, <span id="nome-usuario"> Jorge.</span>
+                    <br> <span id="mensagem">Estamos protegendo você.</span>
                 </h2>
-    
+
                 <div class="card-group">
-    
+
                     <div class="row">
-    
+
                         <div class="card card-green">
-                            <img class="icon" src="../static/assets/images/icononda.png" alt="" />
+                            <img class="icon" src="{{ url_for('static', filename='assets/images/icononda.png') }}"
+                                alt="" />
                             <h3>02 de outubro</h3>
                             <p>Última análise do sistema</p>
                         </div>
-    
+
                         <div class="card card-proccess">
-                            <img class="icon" src="../static/assets/images/iconpasta.png" alt="" />
-                            <h3>142</h3>
+                            <img class="icon" src="{{ url_for('static', filename='assets/images/iconpasta.png') }}"
+                                alt="" />
+                            <h3 id="numero-processos">142</h3>
                             <p>Processos analisados</p>
                         </div>
-    
+
                     </div>
-    
+
                     <div class="row">
-    
+
                         <div class="card card-status">
-                            <img class="icon" src="../static/assets/images/iconstatus.png" alt="" />
-                            <h3 style="text-transform: capitalize;"><span class="status"></span> Seguro</h3>
+                            <img class="icon" src="{{ url_for('static', filename='assets/images/iconstatus.png') }}"
+                                alt="" />
+                            <h3 style="text-transform: capitalize;">
+                                <span id="status" class="status"></span> <span id="status-mensagem"></span> </h3>
                             <p>Status</p>
                         </div>
-    
+
                         <div class="card card-outline">
-                            <img class="icon" src="../static/assets/images/iconscan.png" alt="" />
+                            <img class="icon" src="{{ url_for('static', filename='assets/images/iconscan.png') }}"
+                                alt="" />
                             <h3>Processos encerrados</h3>
                             <div class="more">
                                 <p>Ver mais</p>
-                                <img src="../static/assets/images/iconseta.png" alt="" />
+                                <img src="{{ url_for('static', filename='assets/images/iconseta.png') }}" alt="" />
                             </div>
                         </div>
-    
+
                     </div>
                 </div>
             </div>
-    
+
             <div class="card-monitoramento-container">
-    
-                <img src="../static/assets/images/robo.png" class="robo-img" alt="" />
+
+                <img src="{{ url_for('static', filename='assets/images/robo.png') }}" class="robo-img" alt="" />
                 <div class="card">
                     <div>
                         <span>
-                            <h4>Ative o monitoramento</h4>
-                            <p>Sua segurança está em risco</p>
+                            <h4 id="titulo-monitorar">Ative o monitoramento</h4>
+                            <p id="mensagem-monitorar">Sua segurança está em risco</p>
                         </span>
                         <label class="switch">
                             <input id="checkbox" type="checkbox" />
@@ -98,19 +103,110 @@
                         </label>
                     </div>
                     <div class="animation">
-                        <canvas id="canvas"></canvas>
+                        <!-- <div id="canvas"></div> -->
+                        <canvas id="canvas" style="display: none;"></canvas>
                     </div>
                 </div>
-                
+
             </div>
         </main>
+
+        <div id="retorno" style="color: #fff; font-size: 32px;"></div>
 
     </div>
 </body>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r122/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"
+    integrity="sha512-16esztaSRplJROstbIIdwX3N97V1+pZvV33ABoG1H2OyTttBxEGkTsoIVsiP1iaTtM8b3+hu2kB6pQ4Clr5yug=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
+
     const checkbox = document.querySelector("#checkbox");
-    const bola = document.querySelector("#bola-img");
+
+    // Pega as configurações do projeto
+    async function aplicarConfiguracoes() {
+
+        const resposta = await fetch('/api/configuracoes')
+        let dados = await resposta.json();
+
+        dados = dados.data;
+
+        aplicarTextos(dados.status);
+
+        document.getElementById("nome-usuario").innerHTML = dados.nome_usuario;
+        document.getElementById("numero-processos").innerHTML = dados.processos_analisados;
+
+    }
+
+    aplicarConfiguracoes();
+
+    function aplicarTextos(status) {
+
+        if (status) {
+
+            document.getElementById("status-mensagem").innerText = "Seguro";
+            document.getElementById("titulo-monitorar").innerHTML = "Monitorando o sistema";
+            document.getElementById("mensagem-monitorar").innerHTML = "Sua segurança está ativa.";
+            document.getElementById("mensagem").innerHTML = "Estamos protegendo você.";
+            document.getElementById("status").classList.remove('vermelho');
+            checkbox.checked = true;
+
+        } else {
+
+            document.getElementById("status-mensagem").innerText = "Inseguro";
+            document.getElementById("titulo-monitorar").innerHTML = "ATIVE O MONITORAMENTO";
+            document.getElementById("mensagem-monitorar").innerHTML = "Sua segurança está em risco!";
+            document.getElementById("mensagem").innerHTML = "Sua proteção está desativada.";
+            document.getElementById("status").classList.add('vermelho');
+            checkbox.checked = false;
+
+        }
+
+    }
+
+    async function monitorarSistema() {
+
+        fetch('/api/monitorar')
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+            });
+
+    }
+
+    async function desligar() {
+
+        fetch('/api/desligar')
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+            });
+
+    }
+
+    var colorStatus = localStorage.getItem('dtsldColorStatus') ?? 0x0B7314;
+
+    checkbox.addEventListener("change", async () => {
+
+        // Ligar
+        if (checkbox.checked) {
+
+            await monitorarSistema();
+            colorStatus = 0x0B7314;
+            localStorage.setItem('statusMonitoramento', 'ligado');
+
+        } else { // Desligar
+
+            await desligar();
+            colorStatus = 0xD11400;
+            localStorage.setItem('statusMonitoramento', 'desligado');
+
+        }
+
+        aplicarTextos(checkbox.checked);
+
+    });
 
     const menuBtn = document.querySelector("#menu-btn")
     const menu = document.querySelector("#menu")
@@ -119,8 +215,9 @@
     menuBtn.addEventListener("click", () => {
         menuContent.classList.toggle("show")
         menu.classList.toggle("opened")
-    })
+    });
+
 </script>
-<script src="../static/js/animation.js"></script>
+<!-- <script src="{{ url_for('static', filename='js/animation.js') }}"></script> -->
 
 </html>

@@ -1,118 +1,76 @@
-let canvas = document.getElementById('canvas');
-let ctx = canvas.getContext('2d');
+var scene = new THREE.Scene();
+document.addEventListener('mousemove', onMouseMove, false);
+var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+var mouseX;
+var mouseY;
 
-var colorStatus = localStorage.getItem('dtsldColorStatus') ?? "D11400";
+var renderer = new THREE.WebGLRenderer();
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
 
-checkbox.addEventListener("change", () => {
-
-    colorStatus = checkbox.checked ? "0B7314" : "D11400";
-    localStorage.setItem('dtsldColorStatus', colorStatus);
-
-    color.addColorStop(0.1, `#${colorStatus}46`);
-    color.addColorStop(0.049, `#${colorStatus}0D`);
-    resizeCanvas();
-
+window.addEventListener("resize", function () {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
-let vertices = 90;
-let amplitude = 30;
-let color = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-color.addColorStop(0.1, `#${colorStatus}46`);
-color.addColorStop(0.049, `#${colorStatus}0D`);
-let time = 0;
+var distance = Math.min(200, window.innerWidth / 4);
+var geometry = new THREE.Geometry();
 
-function createSphere(radius, xCenter, yCenter) {
-    let points = [];
-    for (let i = 0; i <= vertices; i++) {
-        let angle1 = i / vertices * Math.PI * 2;
-        let x1 = Math.cos(angle1) * radius + xCenter;
-        let y1 = Math.sin(angle1) * radius + yCenter;
-        points.push({ x: x1, y: y1 });
-    }
-    return points;
+for (var i = 0; i < 1600; i++) {
+
+    var vertex = new THREE.Vector3();
+
+    // var theta = THREE.Math.randFloatSpread(360); 
+    var theta = Math.acos(THREE.Math.randFloatSpread(2));
+    var phi = THREE.Math.randFloatSpread(360);
+
+    vertex.x = distance * Math.sin(theta) * Math.cos(phi);
+    vertex.y = distance * Math.sin(theta) * Math.sin(phi);
+    vertex.z = distance * Math.cos(theta);
+
+    geometry.vertices.push(vertex);
 }
-
-let spheres = [];
-
-function update() {
-    time += 0.03;
-}
-
-function render() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 1;
-    ctx.lineCap = 'round';
-
-    for (let i = 0; i < spheres.length; i++) {
-        let sphere = spheres[i];
-        for (let j = 0; j < sphere.length; j++) {
-            let point = sphere[j];
-            let waveRadius;
-            if (i < 30) {
-                waveRadius = (i + 1) / 60 * amplitude * Math.cos(j / vertices * Math.PI * 700 + time);
-            } else {
-                waveRadius = (i + 1) / 1000 * amplitude * Math.cos(j / vertices * Math.PI * 700 + time);
-            }
-            let x = point.x + Math.cos(j / vertices * Math.PI * 8 + time) * waveRadius;
-            let y = point.y + Math.sin(j / vertices * Math.PI * 8 + time) * waveRadius;
-            if (j === 0) {
-                ctx.beginPath();
-                ctx.moveTo(x, y);
-            } else {
-                ctx.lineTo(x, y);
-            }
-        }
-        ctx.stroke();
-    }
-
-}
-
-function resizeCanvas() {
-    canvas.width = 550;
-    canvas.height = 550;
-    spheres = [];
+var particles = new THREE.Points(geometry, new THREE.PointsMaterial({ color: colorStatus, size: 2 }));
+particles.boundingSphere = 50;
 
 
-    for (let i = 0; i < 30; i++) {
-        let radius = 10 + 5 * i;
-        let xCenter = canvas.width / 2 + Math.sin(i / 60 * Math.PI * 2)
-        let yCenter = canvas.height / 2 + Math.cos(i / 80 * Math.PI * 2);
-        spheres.push(createSphere(radius, xCenter, yCenter));
-    }
-    for (let i = 0; i < 40; i++) {
-        let radius = 130 + 0.5 * i;
-        let xCenter = canvas.width / 2 + 30 * Math.cos(i / 60 * Math.PI * 2);
-        let yCenter = canvas.height / 2 - 27 * Math.sin(i / 80 * Math.PI * 2);
-        spheres.push(createSphere(radius, xCenter, yCenter));
-    }
-    for (let i = 0; i < 50; i++) {
-        let radius = 140 + 0.8 * i;
-        let xCenter = canvas.width / 2 + 39 * Math.cos(i / 70 * Math.PI * 2);
-        let yCenter = canvas.height / 2 - 90 * Math.sin(i / 800 * Math.PI * 2);
-        spheres.push(createSphere(radius, xCenter, yCenter));
-    }
-    for (let i = 0; i < 80; i++) {
-        let radius = 150 + 0.8 * i;
-        let xCenter = canvas.width / 2 + 45 * Math.cos(i / 70 * Math.PI * 2);
-        let yCenter = canvas.height / 2 - 40 * Math.sin(i / 800 * Math.PI * 2);
-        spheres.push(createSphere(radius, xCenter, yCenter));
-    }
-    for (let i = 0; i < 100; i++) {
-        let radius = 180 + 0.7 * i;
-        let xCenter = canvas.width / 2 - 35 * Math.cos(i / 80 * Math.PI * 2);
-        let yCenter = canvas.height / 2 + 30 * Math.sin(i / 150 * Math.PI * 2);
-        spheres.push(createSphere(radius, xCenter, yCenter));
-    }
-}
+var renderingParent = new THREE.Group();
+renderingParent.add(particles);
 
-resizeCanvas();
-// window.addEventListener('resize', resizeCanvas);
+var resizeContainer = new THREE.Group();
+resizeContainer.add(renderingParent);
+scene.add(resizeContainer);
 
-function animate() {
-    update();
-    render();
+camera.position.z = 400;
+
+var animate = function () {
     requestAnimationFrame(animate);
-}
+    renderer.render(scene, camera);
+};
+var myTween;
+function onMouseMove(event) {
+    if (myTween)
+        myTween.kill();
 
+    mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+    mouseY = - (event.clientY / window.innerHeight) * 2 + 1;
+    myTween = gsap.to(particles.rotation, { duration: 0.1, x: mouseY * -1, y: mouseX });
+    //particles.rotation.x = mouseY*-1;
+    //particles.rotation.y = mouseX;
+}
 animate();
+
+// Scaling animation
+var animProps = { scale: 1, xRot: 0, yRot: 0 };
+gsap.to(animProps, {
+    duration: 10, scale: 1.3, repeat: -1, yoyo: true, ease: "sine", onUpdate: function () {
+        renderingParent.scale.set(animProps.scale, animProps.scale, animProps.scale);
+    }
+});
+
+gsap.to(animProps, {
+    duration: 120, xRot: Math.PI * 2, yRot: Math.PI * 4, repeat: -1, yoyo: true, ease: "none", onUpdate: function () {
+        renderingParent.rotation.set(animProps.xRot, animProps.yRot, 0);
+    }
+});
