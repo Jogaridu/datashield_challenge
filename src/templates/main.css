@@ -1,3 +1,8 @@
+@font-face {
+  font-family: "myfont";
+  src: url("../static/assets/FuturaLT-Bold.woff") format("woff");
+  font-weight: 900;
+}
 * {
   box-sizing: border-box;
 }
@@ -7,17 +12,6 @@ body {
   width: 1024px;
   background-color: black;
   padding: 70px;
-}
-
-@font-face {
-  font-family: "myfont";
-  src: url(../static/assets/FuturaLT-Bold.woff) format("woff");
-  font-weight: 900;
-}
-
-h1 {
-  color: #ffffff;
-  margin-top: 20px;
 }
 
 .cabecalho {
@@ -30,52 +24,56 @@ h1 {
   top: 0;
   left: 0;
   padding: 20px 70px;
+  align-items: flex-start;
 }
 
-.cabecalho_logo{
+.cabecalho_logo {
+  height: 60px;
   display: flex;
-  
+  align-items: center;
 }
 
+h1 {
+  color: #ffffff;
+}
+
+.logo {
+  margin-right: 15px;
+  width: 35px;
+}
 
 .menu {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   border-radius: 20px;
-  padding: 20px 30px 30px 30px;
+  padding: 35px;
 }
 
 .opened {
-    background-color: #171717;
+  background-color: #171717;
 }
 
-.menu-icon{
-    cursor: pointer;
+.cabecalho .menu-icon {
+  cursor: pointer;
+  width: 24px;
 }
-
-
 
 .menu-content {
   display: none;
   list-style: none;
   flex-direction: column;
-  gap: 15px;
-
+  gap: 20px;
 }
 
 .show {
   display: flex;
 }
 
-.cabecalho img {
-  width: 24px;
-}
-
 .cabecalho li {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 .main {
@@ -96,7 +94,6 @@ h2 {
   color: #ffffff;
   margin-bottom: 180px;
   font-family: Helvetica, sans-serif;
- 
 }
 
 h2 .name {
@@ -162,6 +159,7 @@ h3 {
 
 .card p {
   font-size: 14px;
+  font-family: Helvetica, sans-serif;
 }
 
 .status {
@@ -196,13 +194,8 @@ h3 {
 }
 
 .robo-img {
-  width: 230px;
+  width: 240px;
 }
-
-p{
-  font-family: Arial, Helvetica, sans-serif;
-}
-
 
 .card-monitoramento-container .card {
   width: 100%;
@@ -218,7 +211,6 @@ p{
 }
 
 /* slider */
-
 .switch {
   position: relative;
   display: inline-block;
@@ -279,3 +271,4 @@ input:checked + .slider:before {
 .slider.round:before {
   border-radius: 50%;
 }
+
