@@ -2,44 +2,122 @@
 <html lang="pt-br">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Datashield</title>
-
-    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DATASHIELD</title>
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/reset.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"> -->
+    <link rel="stylesheet" href="../static/css/reset.css">
+    <!-- <link rel="stylesheet" href="../static/bootstrap/css/bootstrap-grid.min.css"> -->
+    <link rel="stylesheet" href="../static/css/style.css">
+    <link rel="stylesheet" href="../static/css/animations.css">
 </head>
 
 <body>
-    <div>
-        <button class="btn btn-success" onclick="chamarFuncaoEspecifica()">Monitorar sistema</button>
-        <br>
-        <br>
-        <span id="retorno"></span>
-        <a href="/sobre"></a>
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <ul class="flash-messages">
-            {% for message in messages %}
-            <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
-        {% endif %}
-        {% endwith %}
-    </div>
-    <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
-    <script>
-        function chamarFuncaoEspecifica() {
-            
-            fetch('/api/teste')
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById("retorno").innerHTML = data.message;
-                });
+
+    <div class="container">
+
+        <header>
+            <h1 class="ds">DATASHIELD</h1>
+            <div id="menu" class="menu">
+                <img src="../static/assets/images/iconmenu.svg" id="menu-btn" class="menu-icon" alt="" />
+                <ul id="menu-content">
+                    <li>
+                        <img src="../static/assets/images/iconhome.png" alt="">
+                        <p>Home</p>
+                    </li>
+                    <li>
+                        <img src="../static/assets/images/iconprocess.png" alt="">
+                        <p>Processos</p>
+                    </li>
+                </ul>
+            </div>
+        </header>
+    
+        <main class="main">
+            <div>
+                <h2 class="title">
+                    Ei, <span> Jorge.</span>
+                    <br> Estamos protegendo você.
+                </h2>
+    
+                <div class="card-group">
+    
+                    <div class="row">
+    
+                        <div class="card card-green">
+                            <img class="icon" src="../static/assets/images/icononda.png" alt="" />
+                            <h3>02 de outubro</h3>
+                            <p>Última análise do sistema</p>
+                        </div>
+    
+                        <div class="card card-proccess">
+                            <img class="icon" src="../static/assets/images/iconpasta.png" alt="" />
+                            <h3>142</h3>
+                            <p>Processos analisados</p>
+                        </div>
+    
+                    </div>
+    
+                    <div class="row">
+    
+                        <div class="card card-status">
+                            <img class="icon" src="../static/assets/images/iconstatus.png" alt="" />
+                            <h3 style="text-transform: capitalize;"><span class="status"></span> Seguro</h3>
+                            <p>Status</p>
+                        </div>
+    
+                        <div class="card card-outline">
+                            <img class="icon" src="../static/assets/images/iconscan.png" alt="" />
+                            <h3>Processos encerrados</h3>
+                            <div class="more">
+                                <p>Ver mais</p>
+                                <img src="../static/assets/images/iconseta.png" alt="" />
+                            </div>
+                        </div>
+    
+                    </div>
+                </div>
+            </div>
+    
+            <div class="card-monitoramento-container">
+    
+                <img src="../static/assets/images/robo.png" class="robo-img" alt="" />
+                <div class="card">
+                    <div>
+                        <span>
+                            <h4>Ative o monitoramento</h4>
+                            <p>Sua segurança está em risco</p>
+                        </span>
+                        <label class="switch">
+                            <input id="checkbox" type="checkbox" />
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="animation">
+                        <canvas id="canvas"></canvas>
+                    </div>
+                </div>
                 
-        }
-    </script>
+            </div>
+        </main>
+        
+    </div>
 </body>
+
+<script>
+    const checkbox = document.querySelector("#checkbox");
+    const bola = document.querySelector("#bola-img");
+
+    const menuBtn = document.querySelector("#menu-btn")
+    const menu = document.querySelector("#menu")
+    const menuContent = document.querySelector("#menu-content")
+
+    menuBtn.addEventListener("click", () => {
+        menuContent.classList.toggle("show")
+        menu.classList.toggle("opened")
+    })
+</script>
+<script src="../static/js/animation.js"></script>
 
 </html>
