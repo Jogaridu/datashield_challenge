@@ -208,7 +208,7 @@ def validarResultados(pid, resultados):
     return retorno
 
 
-# iniciar()
+iniciar()
 
 # CÓDIGO ABAIXO É PARA AVALIAR RESULTADOS DO MONGODB
 colecao_processos.find()
