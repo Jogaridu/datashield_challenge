@@ -208,7 +208,7 @@ def validarResultados(pid, resultados):
     return retorno
 
 
-# iniciar()
+iniciar()
 
 # CÓDIGO ABAIXO É PARA AVALIAR RESULTADOS DO MONGODB
 colecao_processos.find()
@@ -237,3 +237,4 @@ for atributo in atributos_analise:
                 resultado[atributo]['maior_valor'] = maior_valor
 
 print(resultado)
+ 
