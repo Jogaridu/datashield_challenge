@@ -115,26 +115,26 @@ h2 .texto4{
     position: absolute;
     font-size: 20px;
     left: 20px;
-    top: 520px;
+    top: 550px;
 }
 
 #texto4{
     position: absolute;
     font-size: 20px;
     left: 20px;
-    top: 545px;
+    top: 575px;
 }
 
 .line{
     position: absolute;
     left: 20px;
-    top: 550px;
+    top: 575px;
 }
 
 .estilo-btn{
     position: absolute;
     left: 1100px;
-    top: 520px;
+    top: 550px;
 	align-items: center; 
 	flex-grow: 0.5; 
 	justify-content: end;
@@ -151,4 +151,15 @@ h2 .texto4{
 	border: none;
 	border-radius: 15px;
 	cursor: pointer;
+}
+
+.imagem-centro{
+    background-color: black;
+    display: flex;
+    justify-content: center;
+}
+
+.img-int{
+    margin-top: 70px;
+    width: 60%;
 }

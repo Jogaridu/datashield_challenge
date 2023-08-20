@@ -1,6 +1,6 @@
 @font-face {
-  font-family: "myfont";
-  src: url("../static/assets/FuturaLT-Bold.woff") format("woff");
+  font-family: "FuturaLT";
+  src: url("../assets/fonts/FuturaLT-Bold.woff") format("woff");
   font-weight: 900;
 }
 * {
@@ -16,7 +16,7 @@ body {
 
 .cabecalho {
   color: #ffffff;
-  font-family: "myfont";
+  font-family: "FuturaLT";
   width: 1024px;
   display: flex;
   justify-content: space-between;
@@ -153,7 +153,7 @@ h3 {
 
 .card h4 {
   text-transform: uppercase;
-  font-family: "myfont";
+  font-family: "FuturaLT";
   font-size: 16px;
 }
 
