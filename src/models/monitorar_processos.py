@@ -190,7 +190,7 @@ class Monitoramento:
                 })
 
             except psutil.NoSuchProcess:
-                print("Processo não encontrado.")
+                print("Processo não encontrado. Continuando a execução do programa.")
 
             except PermissionError:
                 print(f"Erro de permissão. Continuando a execução do programa.")
