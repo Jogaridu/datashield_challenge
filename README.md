@@ -52,8 +52,6 @@ python3
 ### 5° Passo - Ligar monitoramento do endpoint 
 ![Imagem do programa]
 
-## Youtube
-[Link para o Youtube]
 
 ## Dashboard de avaliação de performance 
 
@@ -61,7 +59,7 @@ python3
 ### Ambiente de teste de ransomwares
 Sistema operacional: Windows 10
 Processador: Intel Pentium G4560 3.5Ghz
-RAM: 16GB
+RAM: 4GB
 SSD: 128GB
 
 
