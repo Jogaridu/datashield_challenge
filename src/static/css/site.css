@@ -19,7 +19,7 @@
 
 body {
     background-color: black;
-    padding: 70px;
+    padding: 4.375rem;
   }
 
 .cabecalho {
@@ -29,15 +29,15 @@ body {
     position: absolute;
     top: 0;
     left: 0;
-    padding: 45px 40px 40px 70px;
+    padding: 2.813rem 2.5rem 2.5rem 4.375rem;
     align-items: flex-start;
 }
 
 h1{
     color: #ffffff;
     font-family: "FuturaLT";
-    font-size: 25px; 
-    margin-left: 10px;
+    font-size: 1.563rem; 
+    margin-left: 0.625rem;
 }
   
 .alinhamento{
@@ -47,25 +47,25 @@ h1{
 }
 
 .cabecalho_logo {
-    height: 60px;
+    height: 3.75rem;
     display: flex;
     align-items: center;
 }
 
 .logo {
-    margin-right: 15px;
-    width: 50px;
+    margin-right: 0.938rem;
+    width: 3.125rem;
 }
 
 .opcoes ul li  {
         display: inline-block;
-        padding-right: 45px;
-        font-size: 20px;
+        padding-right: 2.813rem;
+        font-size: 1.25rem;
        
     }
 
 .video-container{
-    margin-top: 90px;
+    margin-top: 5.625rem;
     width: 104%;
 }
 
@@ -76,7 +76,7 @@ h1{
 
 h2{
     color: #ffffff;
-    font-size: 60px;
+    font-size: 3.75rem;
 }
 
 h2 .texto1 {
@@ -89,18 +89,19 @@ h2 .texto2 {
     font-family: "Baskerville" ;
 }
 
+
 #texto1 {
     position: absolute;
-    font-size: 57px;
-    left: 5px;
-    top: 200px;
+    font-size: 3.563rem;
+    left: 0.313rem;
+    top: 12.5rem;
   }
 
 #texto2 {
     position: absolute;
-    font-size: 57px;
-    left: 5px;
-    top: 260px;
+    font-size: 3.563rem;
+    left: 0.313rem;
+    top: 16.25rem;
 }
 
 h2 .texto3{
@@ -162,4 +163,81 @@ h2 .texto4{
 .img-int{
     margin-top: 70px;
     width: 60%;
+}
+
+h2 .texto5 {
+    font-weight: bold;
+    font-family: "FuturaLT";
+}
+  
+h2 .texto6 {
+    display: block;
+    font-family: "Baskerville" ;
+}
+
+h2 #texto5 {
+    color: #ffffff;
+    position: absolute;
+    font-size: 65px;
+    top: 1450px;
+
+}
+
+h2 #texto6{
+    color: #ffffff;
+    position: absolute;
+    font-size: 65px;
+    top: 1510px;
+}
+
+h2 .texto7 {
+    font-weight: bold;
+    font-family: "FuturaLT";
+}
+  
+h2 .texto8 {
+    display: block;
+    font-family: "Baskerville" ;
+}
+
+h2 #texto7 {
+    color: #ffffff;
+    position: absolute;
+    font-size:30px;
+    top: 1650px;
+    left: 200px;
+}
+
+h2 #texto8{
+    color: #ffffff;
+    position: absolute;
+    font-size: 30px;
+    top: 1700px;
+    left: 200px;
+}
+
+h2 .texto9 {
+    font-weight: bold;
+    font-family: "FuturaLT";
+}
+  
+h2 .texto10 {
+    display: block;
+    font-family: "Baskerville" ;
+}
+
+h2 #texto9 {
+    color: #ffffff;
+    position: absolute;
+    font-size:30px;
+    top: 1900px;
+    left: 350px;
+}
+
+h2 #texto10{
+    color: #ffffff;
+    position: absolute;
+    font-size: 30px;
+    top: 1950px;
+    left: 350px;
 }

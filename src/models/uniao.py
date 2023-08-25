@@ -71,10 +71,11 @@ def folder_monitor(caminho_pasta):
                     try:
                         process_id = proc.info['pid']
                         process_name = proc.info['name']
-                        if process_name == 'kidransomware.exe':
-                            print(f"Processo de ransomware detectado! ID: {process_id}")
-                            os.kill(process_id, SIGTERM)
-                            print("processo finalizado!")
+                        
+                        print(proc)
+                        print(f"Processo {process_name} mexeu na pasta! ID: {process_id}")
+                        os.kill(process_id, SIGTERM)
+                        print("processo finalizado!")
                     except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
                         pass
     except KeyboardInterrupt:
