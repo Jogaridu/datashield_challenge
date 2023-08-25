@@ -1,20 +1,20 @@
 @font-face {
     font-family: "FuturaLT";
     src: url("../assets/fonts/FuturaLT-Bold.woff") format("woff");
-  }
+}
 
 @font-face {
     font-family: "Helvetica";
-    src: url("../assets/fonts/Helvetica.woff");
+    src: url("../assets/fonts/Helvetica.woff") format("woff");
 }
 @font-face {
     font-family: "Helvetica-Bold";
-    src: url("../assets/fonts/Helvetica-Bold.woff");
+    src: url("../assets/fonts/Helvetica-Bold.woff") format("woff");
 }
 
 @font-face {
-    font-family: "Baskerville";
-    src: url(../assets/Baskerville10ProMedium-Italic.woff);
+    font-family: "Baskerville" ;
+    src: url(../assets/fonts/Baskerville10ProMedium-Italic.woff) format("woff");
 }
 
 body {
