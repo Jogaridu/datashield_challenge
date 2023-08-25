@@ -27,7 +27,7 @@ Segundo a Forbes, em 2021, 80% das organizações foram atingidas por um ataque 
 
 ## A Datashield
 
-A partir desse desafio, a Datashield foi inventada e trabalhada durante o ano todo com o intuito de realizar e resolver o desafio de uma maneira impecavel.................
+A partir desse desafio, a Datashield foi inventada e trabalhada durante o ano todo com o intuito de realizar e resolver o desafio de uma maneira impecavel. 
 
 ## Passo a passo para executar o programa
 
