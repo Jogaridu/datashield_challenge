@@ -3,6 +3,7 @@ import os, signal
 import wmi
 import sys
 import time
+from sklearn import tree 
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'database'))
 from conexao_db  import instanciar_processos, instanciar_analise
@@ -41,6 +42,8 @@ class Monitoramento:
  
     def iniciar(self):
 
+        ia = importaIA()
+
         c = wmi.WMI(privileges=["Security"])
         process_watcher = c.Win32_Process.watch_for("creation")
         self.monitoramento_ativo = True
@@ -51,10 +54,29 @@ class Monitoramento:
             while self.monitoramento_ativo:
                 new_process = process_watcher()
                 print(new_process)
+                processo_ia = psutil.Process(new_process.ProcessId) 
+                media = ia.predict([processo_ia.num_handles(),
+                     processo_ia.memory_info().num_page_faults,
+                     processo_ia.memory_info().pagefile,
+                     processo_ia.memory_info().peak_pagefile,
+                     processo_ia.memory_info().rss,
+                     processo_ia.num_threads(),
+                     new_process.Priority,
+                     processo_ia.memory_info().private])
+                
+                    #decisao se é seguro ou ameaca
+                if media == 1:
+
+                    os.kill(new_process.ProcessId, signal.SIGILL)
+
+                    print(f"AMEAÇA NEUTRALIZADA.")
+                    continue
+                    
 
                 self.analise_instancia(new_process.ProcessId, new_process)
         except KeyboardInterrupt:
             pass
+
 
 
     def analise_instancia(self, pid, processo):
@@ -247,30 +269,36 @@ def validarResultados(pid, resultados):
 #iniciar()
 
 # CÓDIGO ABAIXO É PARA AVALIAR RESULTADOS DO MONGODB
-colecao_processos.find()
-documentos = list(colecao_processos.find())
 
-resultado = {}
 
-atributos_analise = ['handleCount', 'pageFaults', 'pageFileUsage', 'peakPageFileUsage', 'workingSetSize', 'threadCount', 'priority', 'privatePageCount']
+def importaIA():
 
-for atributo in atributos_analise:
-    resultado[atributo] = {
-        'atributo': '',
-        'maior_valor': float('-inf')
-    }
+    colecao_processos.find()
+    documentos = list(colecao_processos.find())
 
-for atributo in atributos_analise:
-    maior_valor = float('-inf')
-    processo_nome = ''
-    for json_obj in documentos:
-        if atributo in json_obj['dadosProcesso']:
-            valor = json_obj['dadosProcesso'][atributo]
-            if float(valor) > float(maior_valor):
-                maior_valor = valor
-                processo_nome = json_obj['nomeProcesso']
-                resultado[atributo]['atributo'] = processo_nome
-                resultado[atributo]['maior_valor'] = maior_valor
+    arrayStatus = []
+    array = []
 
-print(resultado)
- 
+    for doc in documentos:
+        features = []
+        features.append(doc["dadosProcesso"]["handleCount"])
+        features.append(doc["dadosProcesso"]["pageFaults"])
+        features.append(doc["dadosProcesso"]["pageFileUsage"])
+        features.append(doc["dadosProcesso"]["peakPageFileUsage"])
+        features.append(doc["dadosProcesso"]["workingSetSize"])
+        features.append(doc["dadosProcesso"]["threadCount"])
+        features.append(doc["dadosProcesso"]["priority"])
+        features.append(doc["dadosProcesso"]["privatePageCount"])
+        array.append(features)
+        if doc["status"] == "seguro":
+            arrayStatus.append(0)
+        else:
+            arrayStatus.append(1)    
+
+    classif = tree.DecisionTreeClassifier() #Classificador
+    
+    classif.fit (array, arrayStatus)
+    
+    return classif
+
+    
