@@ -2,9 +2,10 @@ import time
 import logging
 import os
 import psutil  # Importe a biblioteca psutil
-from signal import SIGTERM
+from signal import SIGILL
 from watchdog.observers import Observer
 from watchdog.events import LoggingEventHandler
+from watchdog.events import FileSystemEventHandler
 import subprocess
 import git
 import win32file
@@ -22,16 +23,17 @@ def gitclone():
     caminho = f"C:\\Users\\{nomeuser}\\Desktop\\1honeypot"
 
     url_repo = "https://github.com/pedr0aug/honey.git"
-    
+
     try:
-         
+
         git.Repo.clone_from(url_repo, caminho)
 
         print(f"Repositório clonado em: {caminho}")
 
-        return caminho 
+        return caminho
     except:
         print(f"Repositório {caminho} ja existe ")
+        return caminho
 
 
 def pasta_oculta(caminho_pasta):
@@ -49,41 +51,39 @@ def pasta_oculta(caminho_pasta):
     except Exception as e:
         print(f"Erro ao tornar a pasta oculta: {e}")
 
+class MyEventHandler(FileSystemEventHandler):
+    def __init__(self):
+        self.folder_modified = False
+    
+    def on_any_event(self, event):
+        self.folder_modified = True
+
 
 def folder_monitor(caminho_pasta):
-        
-    pid = os.getpid()
-    print("Observador iniciado | PID:",pid)
 
-    event_handler = LoggingEventHandler()
+    print("Observador iniciado HONEYPOT")
+
+    # event_handler = LoggingEventHandler()
+    event_handler = MyEventHandler()
     observer = Observer()
 
-    logging.basicConfig(level=logging.INFO, format='%(asctime)s - PID:%(process)d - %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+    logging.basicConfig(
+        level=logging.INFO, format='%(asctime)s - PID:%(process)d - %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
     observer.schedule(event_handler, caminho_pasta, recursive=True)
     observer.start()
 
-    try:
-            while True:
-                time.sleep(1)
-                # Obtendo a lista de processos em execução
-                for proc in psutil.process_iter(['pid', 'name']):
-                    try:
-                        process_id = proc.info['pid']
-                        process_name = proc.info['name']
-                        
-                        print(proc)
-                        print(f"Processo {process_name} mexeu na pasta! ID: {process_id}")
-                        os.kill(process_id, SIGTERM)
-                        print("processo finalizado!")
-                    except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
-                        pass
-    except KeyboardInterrupt:
-            observer.stop()
-            observer.join()    
+    while True:
+        observer.join()
+    return {'instancia': observer, 'evento': event_handler.folder_modified}
+    # try:
+        
+    # except KeyboardInterrupt:
+    #     observer.stop()
+    #     observer.join()
 
 
-caminho_pasta = gitclone()
-pasta_oculta(caminho_pasta)
-folder_monitor(caminho_pasta)
-
+# caminho_pasta = gitclone()
+# print(caminho_pasta)
+# pasta_oculta(caminho_pasta)
+# folder_monitor(caminho_pasta)

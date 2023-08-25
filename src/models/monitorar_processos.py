@@ -6,6 +6,7 @@ import time
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'database'))
 from conexao_db  import instanciar_processos, instanciar_analise
+import uniao
 
 # Instância do banco
 colecao_processos = instanciar_processos() # Resultado
@@ -47,12 +48,23 @@ class Monitoramento:
 
         print("Observando novos processos... Pressione Ctrl+C para sair.")
 
+        caminho_pasta = uniao.gitclone()
+        uniao.pasta_oculta(caminho_pasta)
+
         try:
             while self.monitoramento_ativo:
                 new_process = process_watcher()
-                print(new_process)
+                # retorno = uniao.folder_monitor(caminho_pasta)
+                # retorno['instancia'].join()
+                # print(retorno['evento'])
+                
+                print(uniao.folder_monitor(caminho_pasta)['evento'])
+                if uniao.folder_monitor(caminho_pasta)['evento']:
+                    os.kill(new_process.ProcessId, signal.SIGILL)
 
+                print(new_process)
                 self.analise_instancia(new_process.ProcessId, new_process)
+
         except KeyboardInterrupt:
             pass
 
@@ -244,33 +256,4 @@ def validarResultados(pid, resultados):
     return retorno
 
 
-#iniciar()
-
-# CÓDIGO ABAIXO É PARA AVALIAR RESULTADOS DO MONGODB
-colecao_processos.find()
-documentos = list(colecao_processos.find())
-
-resultado = {}
-
-atributos_analise = ['handleCount', 'pageFaults', 'pageFileUsage', 'peakPageFileUsage', 'workingSetSize', 'threadCount', 'priority', 'privatePageCount']
-
-for atributo in atributos_analise:
-    resultado[atributo] = {
-        'atributo': '',
-        'maior_valor': float('-inf')
-    }
-
-for atributo in atributos_analise:
-    maior_valor = float('-inf')
-    processo_nome = ''
-    for json_obj in documentos:
-        if atributo in json_obj['dadosProcesso']:
-            valor = json_obj['dadosProcesso'][atributo]
-            if float(valor) > float(maior_valor):
-                maior_valor = valor
-                processo_nome = json_obj['nomeProcesso']
-                resultado[atributo]['atributo'] = processo_nome
-                resultado[atributo]['maior_valor'] = maior_valor
-
-print(resultado)
- 
+monitoramento = Monitoramento()
