@@ -54,24 +54,32 @@ class Monitoramento:
             while self.monitoramento_ativo:
                 new_process = process_watcher()
                 print(new_process)
-                processo_ia = psutil.Process(new_process.ProcessId) 
-                media = ia.predict([processo_ia.num_handles(),
-                     processo_ia.memory_info().num_page_faults,
-                     processo_ia.memory_info().pagefile,
-                     processo_ia.memory_info().peak_pagefile,
-                     processo_ia.memory_info().rss,
-                     processo_ia.num_threads(),
-                     new_process.Priority,
-                     processo_ia.memory_info().private])
-                
-                    #decisao se é seguro ou ameaca
-                if media == 1:
-
-                    os.kill(new_process.ProcessId, signal.SIGILL)
-
-                    print(f"AMEAÇA NEUTRALIZADA.")
-                    continue
+                if new_process.ProcessId:
+                    processo_ia = psutil.Process(new_process.ProcessId) 
+                    # media = ia.predict([processo_ia.num_handles(),
+                    #     processo_ia.memory_info().num_page_faults,
+                    #     processo_ia.memory_info().pagefile,
+                    #     processo_ia.memory_info().peak_pagefile,
+                    #     processo_ia.memory_info().rss,
+                    #     processo_ia.num_threads(),
+                    #     new_process.Priority,
+                    #     processo_ia.memory_info().private])
                     
+                    # #decisao se é seguro ou ameaca
+                    # if media == 1:
+
+                    #     os.kill(new_process.ProcessId, signal.SIGILL)
+
+                    #     print(f"AMEAÇA NEUTRALIZADA.")
+                    #     continue
+                    print([processo_ia.num_handles(),
+                        processo_ia.memory_info().num_page_faults,
+                        processo_ia.memory_info().pagefile,
+                        processo_ia.memory_info().peak_pagefile,
+                        processo_ia.memory_info().rss,
+                        processo_ia.num_threads(),
+                        new_process.Priority,
+                        processo_ia.memory_info().private])
 
                 self.analise_instancia(new_process.ProcessId, new_process)
         except KeyboardInterrupt:
@@ -270,7 +278,6 @@ def validarResultados(pid, resultados):
 
 # CÓDIGO ABAIXO É PARA AVALIAR RESULTADOS DO MONGODB
 
-
 def importaIA():
 
     colecao_processos.find()
@@ -297,8 +304,8 @@ def importaIA():
 
     classif = tree.DecisionTreeClassifier() #Classificador
     
-    classif.fit (array, arrayStatus)
+    classif.fit(array, arrayStatus)
     
     return classif
 
-    
+monitoramento = Monitoramento()

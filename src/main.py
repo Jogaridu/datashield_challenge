@@ -5,8 +5,8 @@ def iniciar_aplicacao():
 
     venv = os.path.join(os.path.dirname(__file__), '..', 'venv', 'Scripts', 'python.exe')
 
-    flask_command = subprocess.Popen([venv, ".\src\server.py"])
-    webview_command = subprocess.Popen([venv, r".\src\app.py"])
+    flask_command = subprocess.Popen(["python", r".\src\server.py"])
+    webview_command = subprocess.Popen(["python", r".\src\app.py"])
 
     flask_command.wait()
     webview_command.wait()
