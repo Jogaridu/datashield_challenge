@@ -5,6 +5,7 @@ import pythoncom
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'models'))
 from monitorar_processos import monitoramento
+# from uniao import
 import configuracoes
 
 home = Blueprint('home', __name__)
