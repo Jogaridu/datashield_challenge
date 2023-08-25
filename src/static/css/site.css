@@ -1,20 +1,20 @@
 @font-face {
     font-family: "FuturaLT";
-    src: url("../assets/FuturaLT-Bold.woff") format("woff");
+    src: url("../assets/fonts/FuturaLT-Bold.woff") format("woff");
   }
 
 @font-face {
     font-family: "Helvetica";
-    src: url("../assets/Helvetica.woff");
+    src: url("../assets/fonts/Helvetica.woff");
 }
 @font-face {
     font-family: "Helvetica-Bold";
-    src: url("../assets/Helvetica-Bold.woff");
+    src: url("../assets/fonts/Helvetica-Bold.woff");
 }
 
 @font-face {
     font-family: "Baskerville";
-    src: url(../assets/Baskerville10ProMedium-Italic.woff);
+    src: url("../assets/fonts/Baskerville10ProMedium-Italic.woff");
 }
 
 body {
@@ -59,9 +59,9 @@ h1{
 
 .opcoes ul li  {
         display: inline-block;
-        padding-right: 2.813rem;
-        font-size: 1.25rem;
-       
+        padding-right: 2.800rem;
+        font-size: 1.15rem;
+        font-family: "Helvetica";
     }
 
 .video-container{
@@ -105,11 +105,12 @@ h2 .texto2 {
 }
 
 h2 .texto3{
-    /*  */
+   font-family: "Helvetica";
 }
 
 h2 .texto4{
     display: block;
+    font-family: "Helvetica";
 }
 
 #texto3{
