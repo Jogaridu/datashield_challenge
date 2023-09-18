@@ -242,3 +242,29 @@ h2 #texto10{
     top: 1950px;
     left: 350px;
 }
+
+h2 .texto11 {
+    font-weight: bold;
+    font-family: "FuturaLT";
+}
+  
+h2 .texto12 {
+    display: block;
+    font-family: "Baskerville" ;
+}
+
+h2 #texto11 {
+    color: #ffffff;
+    position: absolute;
+    font-size:30px;
+    top: 2150px;
+    left: 100px;
+}
+
+h2 #texto12{
+    color: #ffffff;
+    position: absolute;
+    font-size: 30px;
+    top: 22000px;
+    left: 100px;
+}
