@@ -3,10 +3,16 @@ import os, signal
 import wmi
 import sys
 import time
+import json
+
+from watchdog.observers import Observer
+from watchdog.events import FileSystemEventHandler
+
+from sklearn import tree
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'database'))
 from conexao_db  import instanciar_processos, instanciar_analise
-import uniao
+import models.honeypot as honeypot
 
 # Instância do banco
 colecao_processos = instanciar_processos() # Resultado
@@ -30,10 +36,28 @@ MAX_THREAD_COUNT = 20
 MAX_PRIORITY = 12
 MAX_PRIVATE_PAGE_COUNT = 70000000
 
+class EventoHoneypotHandler(FileSystemEventHandler):
+
+    def __init__(self):
+        self.pasta_modificada = False
+    
+    def on_any_event(self, event):
+        self.pasta_modificada = True
+        # win32evtlogutil.ReportEvent("Datashield", 1000, eventCategory=0, eventType=win32con.EVENTLOG_WARNING_TYPE, strings=['Atividade maliciosa'])
+        print("Foi identificado uma mudança")
+
+
 class Monitoramento:
+
+    classif =  tree.DecisionTreeClassifier()
+    evento_handler = EventoHoneypotHandler()
 
     def __init__(self):
         self.monitoramento_ativo = False
+
+
+    def status(self):
+        return self.monitoramento_ativo
 
 
     def parar(self):
@@ -42,30 +66,40 @@ class Monitoramento:
  
     def iniciar(self):
 
-        c = wmi.WMI(privileges=["Security"])
-        process_watcher = c.Win32_Process.watch_for("creation")
+        self.machine_learning_iniciar()
+
         self.monitoramento_ativo = True
 
-        print("Observando novos processos... Pressione Ctrl+C para sair.")
+        c = wmi.WMI(privileges=["Security"])
+        process_watcher = c.Win32_Process.watch_for("creation")
 
-        caminho_pasta = uniao.gitclone()
-        uniao.pasta_oculta(caminho_pasta)
+        print("Observando novos processos...")
+
+        # Início do HONEYPOT
+        diretorios = honeypot.iniciar()
+
+        observer = Observer()
+        observer.start()
+
+        for diretorio in diretorios:
+            observer.schedule(self.evento_handler, diretorio + r"\acertificados", recursive=True)
+            observer.schedule(self.evento_handler, diretorio + r"\zcurriculos", recursive=True)
 
         try:
+            
             while self.monitoramento_ativo:
-                new_process = process_watcher()
-                # retorno = uniao.folder_monitor(caminho_pasta)
-                # retorno['instancia'].join()
-                # print(retorno['evento'])
-                
-                print(uniao.folder_monitor(caminho_pasta)['evento'])
-                if uniao.folder_monitor(caminho_pasta)['evento']:
-                    os.kill(new_process.ProcessId, signal.SIGILL)
 
-                print(new_process)
+                new_process = process_watcher()
+                
+                if (self.evento_handler.pasta_modificada):
+                    os.kill(new_process.ProcessId, signal.SIGILL)
+                    break
+
                 self.analise_instancia(new_process.ProcessId, new_process)
 
         except KeyboardInterrupt:
+            # process_watcher.stop()
+            # process_watcher.cancel()
             pass
 
 
@@ -133,8 +167,23 @@ class Monitoramento:
                     "privatePageCount": processo_analise.memory_info().private
                 }
 
-                # Validação inicial caso o processo seja muito malígno
-                status = self.validarResultados(pid, dados_analise)
+                resposta_ml = self.classif.predict([[
+                    processo_analise.num_handles(),
+                    processo_analise.memory_info().num_page_faults,
+                    processo_analise.memory_info().pagefile,
+                    processo_analise.memory_info().peak_pagefile,
+                    processo_analise.memory_info().rss,
+                    processo_analise.num_threads(),
+                    processo_analise.memory_info().private
+                ]])
+
+                if (resposta_ml == 1):
+                    os.kill(pid, signal.SIGILL)
+                    status = 'ameaça'
+                    print(f"O Processo {processo.Name} é uma AMEAÇA.")
+                else:
+                    # Validação inicial caso o processo seja muito malígno
+                    status = self.validarResultados(pid, dados_analise)
 
                 if (status == 'ameaça'):
                     print(f"O Processo {processo.Name} é uma AMEAÇA.")
@@ -212,7 +261,7 @@ class Monitoramento:
 
         retorno = ''
 
-        if sum(resultados.values()) > 4:
+        if (sum(resultados.values()) > 4) or (self.evento_handler.pasta_modificada and sum(resultados.values()) > 2):
 
             retorno = 'ameaça'
 
@@ -225,35 +274,63 @@ class Monitoramento:
             retorno = 'suspeito'
             print(f"Processo SUSPEITO devido a valores ultrapassados. SOB ANÁLISE")
 
-
         else:
             retorno = 'seguro'
 
         return retorno
 
 
-def validarResultados(pid, resultados):
+    def machine_learning_iniciar(self):
 
-    retorno = ''
+        caminho_arquivo = os.path.join(os.path.dirname(__file__), '..', 'config', 'machine_learning.json')
 
-    if sum(resultados.values()) > 4:
+        # Verificar se o arquivo existe, caso contrário, criá-lo
+        if not os.path.exists(caminho_arquivo):
 
-        retorno = 'ameaça'
+            features = []
+            labels = []
 
-        os.kill(pid, signal.SIGILL)
+            for processo in list(colecao_analise.find()):
+                
+                for dado_analise_durante in processo['dadosProcessoDurante']:
 
-        print(f"AMEAÇA NEUTRALIZADA.")
+                    molde_processo = (
+                        dado_analise_durante['handleCount'],
+                        dado_analise_durante['pageFaults'],
+                        dado_analise_durante['pageFileUsage'],
+                        dado_analise_durante['peakPageFileUsage'],
+                        dado_analise_durante['workingSetSize'],
+                        dado_analise_durante['threadCount'],
+                        dado_analise_durante['privatePageCount'],
+                    )
 
-    elif sum(resultados.values()) > 2:
+                    features.append(molde_processo)
 
-        retorno = 'suspeito'
-        print(f"Processo SUSPEITO devido a valores ultrapassados. SOB ANÁLISE")
+                    if processo['status'] == "seguro":
+                        labels.append(0)
+                    elif (processo['status'] == "suspeito" or processo['status'] == "ameaça"):
+                        labels.append(1)
+                    else:
+                        labels.append(1)
 
+            dados_principais = {
+                "features": features,
+                "labels": labels
+            }
 
-    else:
-        retorno = 'seguro'
+            with open(caminho_arquivo, "w") as arquivo:
+                json.dump(dados_principais, arquivo, indent=4)
 
-    return retorno
+        else:
 
+            with open(caminho_arquivo, "rb") as arquivo:
+                dados_existentes = json.load(arquivo)
+
+                features = dados_existentes['features']
+                labels = dados_existentes['labels']
+
+        print(features)
+        self.classif.fit(features, labels)
+    
 
 monitoramento = Monitoramento()

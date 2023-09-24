@@ -3,7 +3,7 @@ import pyaes
 
 # Abrindo arquivos
 for index in range(9):
-    file_name = f"../vitima/img{index}.jpeg"
+    file_name = os.path.join(os.path.dirname(__file__), '..', 'vitima', f"img{index}.jpeg")
     file = open(file_name, "rb")
     file_data = file.read()
     file.close()

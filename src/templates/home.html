@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='assets/icon/favicon.ico') }}">
     <title>Datashield</title>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/reset.css') }}">
@@ -51,7 +52,7 @@
                         <div class="card card-green">
                             <img class="icon" src="{{ url_for('static', filename='assets/images/icononda.png') }}"
                                 alt="" />
-                            <h3>02 de outubro</h3>
+                            <h3 id="ultima-analise">02 de outubro</h3>
                             <p>Última análise do sistema</p>
                         </div>
 
@@ -129,13 +130,14 @@
 
         const resposta = await fetch('/api/configuracoes')
         let dados = await resposta.json();
-
+        
         dados = dados.data;
-
-        aplicarTextos(dados.status);
+        
+        aplicarTextos(dados.status == 'ativo');
 
         document.getElementById("nome-usuario").innerHTML = dados.nome_usuario;
         document.getElementById("numero-processos").innerHTML = dados.processos_analisados;
+        document.getElementById("ultima-analise").innerText = dados.ultima_analise;
 
     }
 

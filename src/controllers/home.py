@@ -5,17 +5,17 @@ import pythoncom
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'models'))
 from monitorar_processos import monitoramento
+from configuracoes import obj_configuracoes
 # from uniao import
-import configuracoes
 
 home = Blueprint('home', __name__)
 
 @home.route('/api/monitorar')
 def api_monitorar():
 
-    global teste
     pythoncom.CoInitialize()
 
+    obj_configuracoes.definir_status('ativo')
     monitoramento.iniciar()
 
     pythoncom.CoUninitialize()
@@ -28,8 +28,8 @@ def api_monitorar():
 @home.route('/api/desligar')
 def api_desligar():
 
-    global teste
     monitoramento.parar()
+    obj_configuracoes.definir_status('inativo')
     
     data = {'status': 'sucesso'}
 
@@ -38,11 +38,19 @@ def api_desligar():
 
 @home.route('/api/configuracoes')
 def api_configuracoes():
-
-    if (configuracoes.validar_arquivo_config()):
-        dados = configuracoes.pegar_config()
-        data = {'status': 200, 'data': dados}
+    
+    obj_configuracoes.validar_config()
+    dados = obj_configuracoes.pegar_config()
+    
+    if dados:
+        return retornoAPI(200, 'success', dados)
     else:
-        data = {'status': 404, 'data': dados}
+        return retornoAPI(404, 'bad request', {})
 
-    return data
+
+def retornoAPI(status_code, status, dados):
+    return {
+        'status_code': status_code,
+        'status': status,
+        'data': dados
+    }
