@@ -193,11 +193,31 @@ header li {
 .more {
     display: flex;
     align-items: center;
+    cursor: pointer;
 }
 
 .more img {
     width: 23px;
-    margin-top: 5px;
+    margin-top: 2.5px;
+}
+
+.more:hover img {
+    transform: scale(2);
+    animation: vermaisanimation 600ms linear infinite;
+}
+
+@keyframes vermaisanimation {
+    0% {
+        transform: translateX(0);
+    }
+
+    50% {
+        transform: translateX(5px);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
 }
 
 .card-status {
