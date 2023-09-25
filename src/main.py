@@ -1,5 +1,6 @@
 import subprocess
 import os
+import time
 
 def iniciar_aplicacao():
 
@@ -7,6 +8,7 @@ def iniciar_aplicacao():
 
     # Obtenha os caminhos absolutos para os scripts
     server_script = os.path.abspath(r'server.py')
+    time.sleep(1)
     app_script = os.path.abspath(r'app.py')
 
     flask_command = subprocess.Popen([venv_python, server_script])

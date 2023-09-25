@@ -4,6 +4,7 @@ import wmi
 import sys
 import time
 import json
+import uuid
 
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
@@ -51,9 +52,11 @@ class Monitoramento:
 
     classif =  tree.DecisionTreeClassifier()
     evento_handler = EventoHoneypotHandler()
+    id = ''
 
     def __init__(self):
         self.monitoramento_ativo = False
+        self.id = self.pegar_uuid()
 
 
     def status(self):
@@ -105,7 +108,7 @@ class Monitoramento:
 
     def analise_instancia(self, pid, processo):
 
-        processo_registrado = colecao_processos.find_one({"nomeProcesso": processo.Name})
+        processo_registrado = colecao_processos.find_one({"nomeProcesso": processo.Name, "uuid": self.id})
 
         if (processo_registrado):
             
@@ -231,14 +234,14 @@ class Monitoramento:
 
                         time.sleep(0.5)
 
-
                 colecao_analise.insert_one({
                     'nomeProcesso': processo.Name,
                     'pid': pid,
                     'dadosAnalise': dados_analise,
                     'dadosProcessoDurante': dados_processo_durante,
                     'dadosProcesso': dados_processo,
-                    'status': status
+                    'status': status,
+                    'uuid': self.id
                 })
 
                 # Salvar para análise no banco
@@ -247,7 +250,8 @@ class Monitoramento:
                     'pid': pid,
                     'dadosAnalise': dados_analise,
                     'dadosProcesso': dados_processo,
-                    'status': status
+                    'status': status,
+                    'uuid': self.id
                 })
 
             except psutil.NoSuchProcess:
@@ -332,5 +336,10 @@ class Monitoramento:
         print(features)
         self.classif.fit(features, labels)
     
+
+    def pegar_uuid(self):
+
+        mac = ':'.join(['{:02x}'.format((uuid.getnode() >> elements) & 0xff) for elements in range(2, -1, -1)])
+        return str(uuid.uuid5(uuid.NAMESPACE_DNS, mac))
 
 monitoramento = Monitoramento()

@@ -2,6 +2,8 @@ from flask import Blueprint
 import sys
 import os
 import pythoncom
+import datetime
+import locale
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'models'))
 from monitorar_processos import monitoramento
@@ -13,9 +15,16 @@ home = Blueprint('home', __name__)
 @home.route('/api/monitorar')
 def api_monitorar():
 
+    locale.setlocale(locale.LC_TIME, 'pt_BR')
+    data_atual = datetime.datetime.now()
+
+    dia_atual = data_atual.strftime('%d')
+    mes_atual = data_atual.strftime('%B').capitalize()
+
     pythoncom.CoInitialize()
 
     obj_configuracoes.definir_status('ativo')
+    obj_configuracoes.definir_ultima_analise(f"{dia_atual} de {mes_atual}")
     monitoramento.iniciar()
 
     pythoncom.CoUninitialize()

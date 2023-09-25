@@ -22,7 +22,7 @@
                 <img class="logo" src="{{ url_for('static', filename='assets/images/logo-ds.svg') }}" alt="">
                 <h1>DATASHIELD</h1>
             </div>
-            <div id="menu" class="menu">
+            <!-- <div id="menu" class="menu">
                 <img src="{{ url_for('static', filename='assets/images/iconmenu.svg') }}" id="menu-btn"
                     class="menu-icon" alt="" />
                 <ul id="menu-content">
@@ -35,11 +35,16 @@
                         <p>Processos</p>
                     </li>
                 </ul>
-            </div>
+            </div> -->
         </header>
 
         <main class="main">
-            <div>
+
+            <div id="carregando">
+                <div class="loading"></div>
+            </div>
+
+            <div id="conteudo-1" class="d-none">
                 <h2 class="title">
                     Ei, <span id="nome-usuario"> Jorge.</span>
                     <br> <span id="mensagem">Estamos protegendo você.</span>
@@ -53,7 +58,7 @@
                             <img class="icon" src="{{ url_for('static', filename='assets/images/icononda.png') }}"
                                 alt="" />
                             <h3 id="ultima-analise">02 de outubro</h3>
-                            <p>Última análise do sistema</p>
+                            <p>Vigilância ativa desde</p>
                         </div>
 
                         <div class="card card-proccess">
@@ -71,7 +76,8 @@
                             <img class="icon" src="{{ url_for('static', filename='assets/images/iconstatus.png') }}"
                                 alt="" />
                             <h3 style="text-transform: capitalize;">
-                                <span id="status" class="status"></span> <span id="status-mensagem"></span> </h3>
+                                <span id="status" class="status"></span> <span id="status-mensagem"></span>
+                            </h3>
                             <p>Status</p>
                         </div>
 
@@ -89,7 +95,7 @@
                 </div>
             </div>
 
-            <div class="card-monitoramento-container">
+            <div id="conteudo-2" class="card-monitoramento-container d-none">
 
                 <img src="{{ url_for('static', filename='assets/images/robo.png') }}" class="robo-img" alt="" />
                 <div class="card">
@@ -110,9 +116,8 @@
                 </div>
 
             </div>
-        </main>
 
-        <div id="retorno" style="color: #fff; font-size: 32px;"></div>
+        </main>
 
     </div>
 </body>
@@ -130,14 +135,20 @@
 
         const resposta = await fetch('/api/configuracoes')
         let dados = await resposta.json();
-        
+
         dados = dados.data;
-        
+
         aplicarTextos(dados.status == 'ativo');
 
         document.getElementById("nome-usuario").innerHTML = dados.nome_usuario;
         document.getElementById("numero-processos").innerHTML = dados.processos_analisados;
         document.getElementById("ultima-analise").innerText = dados.ultima_analise;
+
+        document.getElementById("conteudo-1").classList.remove('d-none');
+        document.getElementById("conteudo-2").classList.remove('d-none');
+        document.getElementById("conteudo-1").classList.add('fade-in');
+        document.getElementById("conteudo-2").classList.add('fade-in');
+        document.getElementById("carregando").classList.add('d-none');
 
     }
 
@@ -168,6 +179,16 @@
     }
 
     async function monitorarSistema() {
+
+        const dataAtual = new Date();
+
+        const diaAtual = dataAtual.getDate();
+
+        const formatoData = new Intl.DateTimeFormat('pt-BR', { month: 'long' });
+
+        const mesAtual = formatoData.format(dataAtual);
+
+        document.getElementById("ultima-analise").innerText = `${diaAtual} de ${mesAtual}`;
 
         fetch('/api/monitorar')
             .then(response => response.json())
@@ -208,15 +229,6 @@
 
         aplicarTextos(checkbox.checked);
 
-    });
-
-    const menuBtn = document.querySelector("#menu-btn")
-    const menu = document.querySelector("#menu")
-    const menuContent = document.querySelector("#menu-content")
-
-    menuBtn.addEventListener("click", () => {
-        menuContent.classList.toggle("show")
-        menu.classList.toggle("opened")
     });
 
 </script>
