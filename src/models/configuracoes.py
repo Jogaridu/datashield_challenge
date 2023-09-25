@@ -1,5 +1,4 @@
 import os
-import json
 import subprocess
 import uuid
 import sys
@@ -22,11 +21,6 @@ class Configuracoes:
 
     def pegar_uuid(self):
 
-        global caminho_arquivo
-        # # Ler os dados do arquivo de configuração
-        # with open(caminho_arquivo, "r") as arquivo:
-        #     dados = json.load(arquivo)
-        #     return dados
         mac = ':'.join(['{:02x}'.format((uuid.getnode() >> elements) & 0xff) for elements in range(2, -1, -1)])
         return str(uuid.uuid5(uuid.NAMESPACE_DNS, mac))
 
@@ -88,5 +82,6 @@ class Configuracoes:
 
         self.atualizar_config({'ultima_analise': data})
         return True
+
 
 obj_configuracoes = Configuracoes()

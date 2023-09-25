@@ -4,6 +4,7 @@ import wmi
 import sys
 import time
 import json
+import uuid
 
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
@@ -44,16 +45,23 @@ class EventoHoneypotHandler(FileSystemEventHandler):
     def on_any_event(self, event):
         self.pasta_modificada = True
         # win32evtlogutil.ReportEvent("Datashield", 1000, eventCategory=0, eventType=win32con.EVENTLOG_WARNING_TYPE, strings=['Atividade maliciosa'])
-        print("Foi identificado uma mudança")
+        print("Foi identificado uma mudança na pasta: " + event.src_path)
 
 
 class Monitoramento:
 
+    # UUID
+    id = ''
+
+    # Machine learning
     classif =  tree.DecisionTreeClassifier()
+
+    # Honeypot
     evento_handler = EventoHoneypotHandler()
 
     def __init__(self):
         self.monitoramento_ativo = False
+        self.id = self.pegar_uuid()
 
 
     def status(self):
@@ -70,8 +78,8 @@ class Monitoramento:
 
         self.monitoramento_ativo = True
 
-        c = wmi.WMI(privileges=["Security"])
-        process_watcher = c.Win32_Process.watch_for("creation")
+        self.c = wmi.WMI(privileges=["Security"])
+        self.process_watcher = self.c.Win32_Process.watch_for("creation")
 
         print("Observando novos processos...")
 
@@ -89,23 +97,33 @@ class Monitoramento:
             
             while self.monitoramento_ativo:
 
-                new_process = process_watcher()
-                
-                if (self.evento_handler.pasta_modificada):
-                    os.kill(new_process.ProcessId, signal.SIGILL)
-                    break
+                try:
 
-                self.analise_instancia(new_process.ProcessId, new_process)
+                    new_process = self.process_watcher()
+                    
+                    if (self.evento_handler.pasta_modificada):
+                        os.kill(new_process.ProcessId, signal.SIGILL)
+                        break
+
+                    self.analise_instancia(new_process.ProcessId, new_process)
+
+                except ValueError:
+                    pass
+
+            if self.monitoramento_ativo == False:
+                self.process_watcher.stop()
+                self.process_watcher.cancel()
+                observer.stop()
 
         except KeyboardInterrupt:
-            # process_watcher.stop()
-            # process_watcher.cancel()
+            self.process_watcher.stop()
+            self.process_watcher.cancel()
             pass
 
 
     def analise_instancia(self, pid, processo):
 
-        processo_registrado = colecao_processos.find_one({"nomeProcesso": processo.Name})
+        processo_registrado = colecao_processos.find_one({"nomeProcesso": processo.Name, "uuid": self.id})
 
         if (processo_registrado):
             
@@ -167,15 +185,16 @@ class Monitoramento:
                     "privatePageCount": processo_analise.memory_info().private
                 }
 
-                resposta_ml = self.classif.predict([[
-                    processo_analise.num_handles(),
-                    processo_analise.memory_info().num_page_faults,
-                    processo_analise.memory_info().pagefile,
-                    processo_analise.memory_info().peak_pagefile,
-                    processo_analise.memory_info().rss,
-                    processo_analise.num_threads(),
-                    processo_analise.memory_info().private
-                ]])
+                # resposta_ml = self.classif.predict([[
+                #     processo_analise.num_handles(),
+                #     processo_analise.memory_info().num_page_faults,
+                #     processo_analise.memory_info().pagefile,
+                #     processo_analise.memory_info().peak_pagefile,
+                #     processo_analise.memory_info().rss,
+                #     processo_analise.num_threads(),
+                #     processo_analise.memory_info().private
+                # ]])
+                resposta_ml = 0
 
                 if (resposta_ml == 1):
                     os.kill(pid, signal.SIGILL)
@@ -231,14 +250,14 @@ class Monitoramento:
 
                         time.sleep(0.5)
 
-
                 colecao_analise.insert_one({
                     'nomeProcesso': processo.Name,
                     'pid': pid,
                     'dadosAnalise': dados_analise,
                     'dadosProcessoDurante': dados_processo_durante,
                     'dadosProcesso': dados_processo,
-                    'status': status
+                    'status': status,
+                    'uuid': self.id
                 })
 
                 # Salvar para análise no banco
@@ -247,8 +266,11 @@ class Monitoramento:
                     'pid': pid,
                     'dadosAnalise': dados_analise,
                     'dadosProcesso': dados_processo,
-                    'status': status
+                    'status': status,
+                    'uuid': self.id
                 })
+
+                print(f"O processo: '{processo.Name}' é {status}")
 
             except psutil.NoSuchProcess:
                 print("Processo não encontrado. Continuando a execução do programa.")
@@ -332,5 +354,14 @@ class Monitoramento:
         print(features)
         self.classif.fit(features, labels)
     
+
+    def pegar_uuid(self):
+
+        mac = ':'.join(['{:02x}'.format((uuid.getnode() >> elements) & 0xff) for elements in range(2, -1, -1)])
+        return str(uuid.uuid5(uuid.NAMESPACE_DNS, mac))
+    
+
+    def status_health(self):
+        return self.monitoramento_ativo
 
 monitoramento = Monitoramento()
