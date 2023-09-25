@@ -1,59 +1,87 @@
 import os
-import json
 import subprocess
+import uuid
+import sys
 
-caminho_arquivo = "src/config/config"
 
-def validar_arquivo_config():
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'database'))
+from conexao_db  import instanciar_usuarios, instanciar_analise
 
-    global caminho_arquivo
+colecao_usuarios = instanciar_usuarios()
+colecao_analise = instanciar_analise()
 
-    # Verificar se o arquivo existe, caso contrário, criá-lo
-    if not os.path.exists(caminho_arquivo):
+caminho_arquivo = "src/config/config.json"
 
-        resultado = subprocess.check_output('whoami', shell=True)
-        saidacmd = resultado.decode('utf-8').strip()
+class Configuracoes:
 
-        saidacmd = saidacmd.split("\\")
-        nomeUsuario = saidacmd[-1]
+    id = ""
 
-        # Criação dos dados iniciais
-        dados_iniciais = {
-            "status": "inativo",
-            "nome_usuario": nomeUsuario,
-            "processos_analisados": 100,
-            "ultima_analise": "2023-08-20"
-        }
+    def __init__(self):
+        self.id = self.pegar_uuid()
 
-        # Criação do arquivo de configuração
-        with open(caminho_arquivo, "w") as arquivo:
-            json.dump(dados_iniciais, arquivo, indent=4)
+    def pegar_uuid(self):
+
+        mac = ':'.join(['{:02x}'.format((uuid.getnode() >> elements) & 0xff) for elements in range(2, -1, -1)])
+        return str(uuid.uuid5(uuid.NAMESPACE_DNS, mac))
+
+
+    def pegar_config(self):
+
+        dados = colecao_usuarios.find_one({"uuid": self.id})
+        del dados['_id']
+        return dados
+
+
+    def validar_config(self):
+
+        dados = self.pegar_config()
+
+        # Verificar se existe configuração, caso contrário, uma config será criada
+        if dados == None:
+
+            resultado = subprocess.check_output('whoami', shell=True)
+            saidacmd = resultado.decode('utf-8').strip()
+
+            saidacmd = saidacmd.split("\\")
+            nomeUsuario = saidacmd[-1]
+
+            # Criação dos dados iniciais
+            dados_iniciais = {
+                "status": "inativo",
+                "nome_usuario": nomeUsuario,
+                "processos_analisados": 0,
+                "ultima_analise": "Sem análise",
+                "uuid": self.id
+            }
+
+            colecao_usuarios.insert_one(dados_iniciais)
         
-    return True
+        return True
 
 
-def atualizar_arquivo_config(novos_dados):
+    def atualizar_config(self, novos_dados):
 
-    global caminho_arquivo
+        colecao_usuarios.update_one({"uuid": self.id}, {'$set': novos_dados})
+        
 
-    # Ler os dados existentes do arquivo
-    with open(caminho_arquivo, "r") as arquivo:
-        dados_existentes = json.load(arquivo)
+    def definir_processos_analisados(self):
 
-    # Atualizar os dados existentes com os novos dados
-    dados_existentes.update(novos_dados)
+        qtde = len(list(colecao_analise.find({"uuid": self.id})))
+        self.atualizar_config({'processos_analisados': qtde})
 
-    # Escrever os dados atualizados de volta para o arquivo
-    with open(caminho_arquivo, "w") as arquivo:
-        json.dump(dados_existentes, arquivo, indent=4)
+        return qtde
     
 
+    def definir_status(self, status):
 
-def pegar_config():
+        self.atualizar_config({'status': status})
+        return True
 
-    global caminho_arquivo
 
-    # Ler os dados do arquivo de configuração
-    with open(caminho_arquivo, "r") as arquivo:
-        dados = json.load(arquivo)
-        return dados
+    def definir_ultima_analise(self, data):
+
+        self.atualizar_config({'ultima_analise': data})
+        return True
+
+
+obj_configuracoes = Configuracoes()

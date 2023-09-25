@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='assets/icon/favicon.ico') }}">
     <title>Datashield</title>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/reset.css') }}">
@@ -21,24 +22,15 @@
                 <img class="logo" src="{{ url_for('static', filename='assets/images/logo-ds.svg') }}" alt="">
                 <h1>DATASHIELD</h1>
             </div>
-            <div id="menu" class="menu">
-                <img src="{{ url_for('static', filename='assets/images/iconmenu.svg') }}" id="menu-btn"
-                    class="menu-icon" alt="" />
-                <ul id="menu-content">
-                    <li>
-                        <img src="{{ url_for('static', filename='assets/images/iconhome.png') }}" alt="">
-                        <p>Home</p>
-                    </li>
-                    <li>
-                        <img src="{{ url_for('static', filename='assets/images/iconprocess.png') }}" alt="">
-                        <p>Processos</p>
-                    </li>
-                </ul>
-            </div>
         </header>
 
         <main class="main">
-            <div>
+
+            <div id="carregando">
+                <div class="loading"></div>
+            </div>
+
+            <div id="conteudo-1" class="d-none">
                 <h2 class="title">
                     Ei, <span id="nome-usuario"> Jorge.</span>
                     <br> <span id="mensagem">Estamos protegendo você.</span>
@@ -51,8 +43,8 @@
                         <div class="card card-green">
                             <img class="icon" src="{{ url_for('static', filename='assets/images/icononda.png') }}"
                                 alt="" />
-                            <h3>02 de outubro</h3>
-                            <p>Última análise do sistema</p>
+                            <h3 id="ultima-analise">02 de outubro</h3>
+                            <p>Vigilância ativa desde</p>
                         </div>
 
                         <div class="card card-proccess">
@@ -70,7 +62,8 @@
                             <img class="icon" src="{{ url_for('static', filename='assets/images/iconstatus.png') }}"
                                 alt="" />
                             <h3 style="text-transform: capitalize;">
-                                <span id="status" class="status"></span> <span id="status-mensagem"></span> </h3>
+                                <span id="status" class="status"></span> <span id="status-mensagem"></span>
+                            </h3>
                             <p>Status</p>
                         </div>
 
@@ -88,7 +81,7 @@
                 </div>
             </div>
 
-            <div class="card-monitoramento-container">
+            <div id="conteudo-2" class="card-monitoramento-container d-none">
 
                 <img src="{{ url_for('static', filename='assets/images/robo.png') }}" class="robo-img" alt="" />
                 <div class="card">
@@ -103,20 +96,17 @@
                         </label>
                     </div>
                     <div class="animation">
-                        <!-- <div id="canvas"></div> -->
-                        <canvas id="canvas" style="display: none;"></canvas>
+                        <img id="img-status" src="{{ url_for('static', filename='assets/images/status-monitoramento.png') }}" class="" />
                     </div>
                 </div>
 
             </div>
-        </main>
 
-        <div id="retorno" style="color: #fff; font-size: 32px;"></div>
+        </main>
 
     </div>
 </body>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r122/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"
     integrity="sha512-16esztaSRplJROstbIIdwX3N97V1+pZvV33ABoG1H2OyTttBxEGkTsoIVsiP1iaTtM8b3+hu2kB6pQ4Clr5yug=="
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -132,10 +122,28 @@
 
         dados = dados.data;
 
-        aplicarTextos(dados.status);
+        aplicarTextos(dados.status == 'ativo');
+
+        if (dados.status == 'ativo') {
+            
+            const status_fetch = await fetch('/api/status');
+            const status = await status_fetch.json()
+            
+            if (!status.data.status_health) {
+                monitorarSistema();
+            }
+
+        }
 
         document.getElementById("nome-usuario").innerHTML = dados.nome_usuario;
         document.getElementById("numero-processos").innerHTML = dados.processos_analisados;
+        document.getElementById("ultima-analise").innerText = dados.ultima_analise;
+
+        document.getElementById("conteudo-1").classList.remove('d-none');
+        document.getElementById("conteudo-2").classList.remove('d-none');
+        document.getElementById("conteudo-1").classList.add('fade-in');
+        document.getElementById("conteudo-2").classList.add('fade-in');
+        document.getElementById("carregando").classList.add('d-none');
 
     }
 
@@ -150,6 +158,8 @@
             document.getElementById("mensagem-monitorar").innerHTML = "Sua segurança está ativa.";
             document.getElementById("mensagem").innerHTML = "Estamos protegendo você.";
             document.getElementById("status").classList.remove('vermelho');
+            document.getElementById("img-status").classList.add('ativo');
+            document.getElementById("img-status").classList.remove('inativo');
             checkbox.checked = true;
 
         } else {
@@ -159,6 +169,8 @@
             document.getElementById("mensagem-monitorar").innerHTML = "Sua segurança está em risco!";
             document.getElementById("mensagem").innerHTML = "Sua proteção está desativada.";
             document.getElementById("status").classList.add('vermelho');
+            document.getElementById("img-status").classList.add('inativo');
+            document.getElementById("img-status").classList.remove('ativo');
             checkbox.checked = false;
 
         }
@@ -166,6 +178,16 @@
     }
 
     async function monitorarSistema() {
+
+        const dataAtual = new Date();
+
+        const diaAtual = dataAtual.getDate();
+
+        const formatoData = new Intl.DateTimeFormat('pt-BR', { month: 'long' });
+
+        const mesAtual = formatoData.format(dataAtual);
+
+        document.getElementById("ultima-analise").innerText = `${diaAtual} de ${mesAtual}`;
 
         fetch('/api/monitorar')
             .then(response => response.json())
@@ -206,15 +228,6 @@
 
         aplicarTextos(checkbox.checked);
 
-    });
-
-    const menuBtn = document.querySelector("#menu-btn")
-    const menu = document.querySelector("#menu")
-    const menuContent = document.querySelector("#menu-content")
-
-    menuBtn.addEventListener("click", () => {
-        menuContent.classList.toggle("show")
-        menu.classList.toggle("opened")
     });
 
 </script>
