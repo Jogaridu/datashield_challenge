@@ -58,6 +58,7 @@ class Monitoramento:
 
     # Honeypot
     evento_handler = EventoHoneypotHandler()
+    id = ''
 
     def __init__(self):
         self.monitoramento_ativo = False
