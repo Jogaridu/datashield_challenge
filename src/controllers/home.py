@@ -8,7 +8,6 @@ import locale
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'models'))
 from monitorar_processos import monitoramento
 from configuracoes import obj_configuracoes
-# from uniao import
 
 home = Blueprint('home', __name__)
 
@@ -49,6 +48,8 @@ def api_desligar():
 @home.route('/api/configuracoes')
 def api_configuracoes():
     
+    obj_configuracoes.definir_processos_analisados()
+
     obj_configuracoes.validar_config()
     dados = obj_configuracoes.pegar_config()
     
