@@ -126,6 +126,7 @@ header li {
 
 .title span {
     font-weight: bold;
+    white-space: nowrap;
 }
 
 .card-group {
