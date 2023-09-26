@@ -85,14 +85,14 @@ class Monitoramento:
         print("Observando novos processos...")
 
         # Início do HONEYPOT
-        diretorios = honeypot.iniciar()
+        # diretorios = honeypot.iniciar()
 
-        observer = Observer()
-        observer.start()
+        # observer = Observer()
+        # observer.start()
 
-        for diretorio in diretorios:
-            observer.schedule(self.evento_handler, diretorio + r"\acertificados", recursive=True)
-            observer.schedule(self.evento_handler, diretorio + r"\zcurriculos", recursive=True)
+        # for diretorio in diretorios:
+        #     observer.schedule(self.evento_handler, diretorio + r"\acertificados", recursive=True)
+        #     observer.schedule(self.evento_handler, diretorio + r"\zcurriculos", recursive=True)
 
         try:
             
