@@ -1,103 +1,239 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r108/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DATASHIELD</title>
     <link rel="stylesheet" href="../static/css/reset.css" />
-    <link rel="stylesheet" href="../static/css/site.css" />
+    <link rel="stylesheet" href="../static/css/style.css" />
+    <link rel="stylesheet" href="../static/js/app.js">
 </head>
 <body>
+    <!-- Navbar -->
+    <header class="navbar">
+        <div class="navbar-logo">
+            <img class="logo" src="../static/assets/images/logo-ds.svg" alt="">
+            <h1>DATASHIELD</h1>
+        </div>
+        
+        <ul class="navbar-options">
+            <li> <a href="#home"><p>Home</p></a></li>
+            <li> <a href="#ferramenta"><p>Ferramenta</p></a></li>
+            <li> <a href="#nos"><p>Nós</p></a></li>
+            <li> <a href="#planos"><p>Planos</p></a></li>
+        </ul>
 
-        <header class="cabecalho">
-            <div class="alinhamento">
-                <div class="cabecalho_logo">
-                    <img class="logo" src="../static/assets/images/logo-ds.svg" alt="">
-                    <h1>DATASHIELD</h1>
-                  </div>
-      
-                  <div class="opcoes">
-                      <ul >
-                          <li> <p style="margin-left: 33.75rem;">Home</p> </li>
-                          <li> <p>Ferramenta</p> </li>
-                          <li> <p>Planos</p> </li>
-                          <li> <p>Ransomwares</p> </li>
-                          <li> <p>Nós</p> </li>
-                      </ul>
-                  </div>
-            </div>
-        </header>
+    </header>
 
-
-    <main>
-        <!-- Sessão 1 - Header | Main-->
-        <div class="main">
-            <div class="video-container">
-
-                <video autoplay loop muted width="100%">
-                     <source src="../static/assets/waves_-_894 (Original).mp4" type="video/mp4" />
-                </video>    
-                
-                <h2>
-                    <span  id="texto1"  class="texto1">Proteja seus dados, conserve as</span>
-                    <span  id="texto2"  class="texto2"> histórias memoráveis </span>
-                </h2>
-
-                <h2>
-                    <span  id="texto3"  class="texto3">Conquiste a segurança dos seus dados</span>
-                    <span  id="texto4"  class="texto4">com a ferramenta Datashield </span>
-                    <hr class="line" width="29%" color="#212121" />
-                </h2>
-
-
-                <nav class="estilo-btn">
-                    <input type="submit" value="Baixar" class="btn">
-                </nav>
-                
+    <!-- Main-->
+    <main id="home">
+        <div class="banner">
+            <video autoplay loop muted width="100%">
+                <source src="../src/assets/waves_-_894 (Original).mp4" type="video/mp4" />
+            </video>         
+            <div class="banner-content">
+                <div class="banner-content-up">
+                    <h1 class="title bold">Proteja seus dados, conserve as</h1>
+                    <h1 class="title italic"> histórias memoráveis </h1>
+                </div>
+                <div class="banner-content-down">
+                    <!-- Comentario -->
+                    <div class="banner-content-down-subtitle">
+                        <div>
+                            <p  style="color: var(--white);" class="comment">Conquiste a segurança dos seus dados</p>
+                            <p  style="color: var(--white);" class="comment">com a ferramenta Datashield </p>
+                        </div>
+                        <hr class="line" width="125%" color="#212121" />
+                    </div>
+                    <!-- Botão -->
+                    <a href="#"><button class="btn">Baixar</button></a>
+                </div>
             </div>
         </div>
-
-        <!-- Sessão 2 - Interface -->
-        <div class="imagem-centro">
-            <img class="img-int" src="../static/assets/images/imagem-interface.png" alt="">
-        </div>
-
-
-        <!-- Sessão 3 - Legado -->
-        <div>
-            <div>
-                <h2>
-                    <span  id="texto5"  class="texto5">Este é o nosso</span>
-                    <span  id="texto6"  class="texto6">legado</span>
-                </h2>
-
-                <h2>
-                    <span  id="texto7"  class="texto7">Modernidade</span>
-                    <span  id="texto8"  class="texto8">Lorem ipsum dolor sit amet consectetur <br> adipisicing elit. Ad explicabo incidunt <br> eum fuga minima?</span>
-                </h2>
-
-                <h2>
-                    <span  id="texto9"  class="texto9">Integridade</span>
-                    <span  id="texto10"  class="texto10">Lorem ipsum dolor sit amet consectetur <br> adipisicing elit. Ad explicabo incidunt <br> eum fuga minima?</span>
-                </h2>
-
-
-                <h2>
-                    <span  id="texto11"  class="texto11">Resposabilidade</span>
-                    <span  id="texto12"  class="texto12">Lorem ipsum dolor sit amet consectetur <br> adipisicing elit. Ad explicabo incidunt <br> eum fuga minima</span>
-                </h2> 
-
-            </div>
-
-            <div>
-
-            </div>
-
-
-        </div>
-
     </main>
+
+    <!-- Interface Image -->
+    <section id="ferramenta">
+        <div class="interface">
+            <img class="interface-img" src="../static/assets/images/imagem-interface.png" alt="">
+        </div>
+    </section>
+
+    <!-- Nosso Legado -->
+    <section id="nos">
+        <div class="nosso-legado">
+            <h1 class="title bold">Este é o nosso</h1>
+            <h1 class="title italic">legado</h1>      
+            <div class="legado-content">
+                <div class="topicos">
+                    <div class="topico t1">
+                        <!-- topico 1 -->
+                        <h3 class="Mini-Titulo-Bold">Modernidade</h3>
+                        <p class="comment">Somos incansáveis em buscar inovação e adotar as últimas tendências tecnológicas para oferecer a você uma experiência atualizada e eficiente.Desde os nossos produtos até o design do nosso site, estamos comprometidos em fornecer soluções que estejam sempre à frente do seu tempo, para que você possa enfrentar os desafios de hoje com as ferramentas do futuro.</p>
+                    </div>
+                    <div class="topico t2">
+                        <!-- topico 2 -->
+                        <h3 class="Mini-Titulo-Bold">Integridade</h3>
+                        <p class="comment">Investimos em sistemas de segurança de ponta e práticas rigorosas de gerenciamento de dados para garantir que suas informações permaneçam seguras e intocadas. Sua confiança é o nosso bem mais precioso, e estamos comprometidos em mantê-la inabalável.</p>
+                    </div>
+                    <div class="topico t3">
+                        <!-- topico 3 -->
+                        <h3 class="Mini-Titulo-Bold">Responsabilidade</h3>
+                        <p class="comment">A responsabilidade é o alicerce sobre o qual construímos nossa marca. Comprometemo-nos a agir de maneira ética, com consideração pelo impacto que temos na proteção de dados, acreditando que cada ação conta. Estamos empenhados em fazer escolhas responsáveis em todas as nossas operações.</p>
+                    </div>
+                    
+                </div>
+                <div class="balleffect">
+                    
+                    <!-- <script>
+    
+                        var scene = new THREE.Scene();
+                        document.addEventListener( 'mousemove', onMouseMove, false );
+                        var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
+                        var mouseX;
+                        var mouseY;
+    
+                        var renderer = new THREE.WebGLRenderer();
+                        renderer.setSize( window.innerWidth, window.innerHeight );
+                        document.body.appendChild( renderer.domElement );
+    
+                        window.addEventListener("resize", function() {
+                        camera.aspect = window.innerWidth / window.innerHeight;
+                        camera.updateProjectionMatrix();
+                        renderer.setSize( window.innerWidth, window.innerHeight );
+                        });
+    
+                        var distance = Math.min(200, window.innerWidth / 4);
+                        var geometry = new THREE.Geometry();
+    
+                        for (var i = 0; i < 1600; i++) {
+    
+                        var vertex = new THREE.Vector3();
+    
+                        // var theta = THREE.Math.randFloatSpread(360); 
+                        var theta = Math.acos(THREE.Math.randFloatSpread(2)); 
+                        var phi = THREE.Math.randFloatSpread(360); 
+    
+                        vertex.x = distance * Math.sin(theta) * Math.cos(phi);
+                        vertex.y = distance * Math.sin(theta) * Math.sin(phi);
+                        vertex.z = distance * Math.cos(theta);
+    
+                        geometry.vertices.push(vertex);
+                        }
+                        var particles = new THREE.Points(geometry, new THREE.PointsMaterial({color: 0x0b7314, size: 2}));
+                        particles.scale.set(0.5, 0.5, 0.5); // Escala o objeto pela metade em todas as direções (x, y, z)
+                        particles.boundingSphere = 50;
+    
+    
+                        var renderingParent = new THREE.Group();
+                        renderingParent.add(particles);
+    
+                        var resizeContainer = new THREE.Group();
+                        resizeContainer.add(renderingParent);
+                        scene.add(resizeContainer);
+    
+                        camera.position.z = 400;
+    
+                        var animate = function () {
+                        requestAnimationFrame( animate );
+                        renderer.render( scene, camera );
+                        };
+                        var myTween;
+                        function onMouseMove(event) {
+                        if(myTween)
+                            myTween.kill();
+                        
+                        mouseX = ( event.clientX / window.innerWidth ) * 2 - 1;
+                        mouseY = - ( event.clientY / window.innerHeight ) * 2 + 1;
+                        myTween = gsap.to(particles.rotation, {duration: 0.1, x: mouseY*-1, y: mouseX});
+                        //particles.rotation.x = mouseY*-1;
+                        //particles.rotation.y = mouseX;
+                        }
+                        animate();
+    
+                        // Scaling animation
+                        var animProps = {scale: 1, xRot: 0, yRot: 0};
+    
+                        gsap.to(animProps, {duration: 120, xRot: Math.PI * 2, yRot: Math.PI * 4, repeat: -1, yoyo: true, ease: "none", onUpdate: function() {
+                        renderingParent.rotation.set(animProps.xRot,animProps.yRot,0);
+                        }});
+    
+                    </script>  -->
+                </div>
+            </div>
+
+        
+        </div>
+    </section>
+
+    <!-- rodape -->
+    <footer id="planos">
+
+        <div class="footer">
+            <!-- parte esquerda -->
+            <div class="footer-esquerda">
+                <div>
+                    <h1 class="title bold">Seu computador</h1>
+                    <h1 class="title italic">seu plano</h1>   
+                
+                    <div class="footer-logo">
+                        <img class="logo" src="../static/assets/images/logo-ds.svg" alt="">
+                        <h1>DATASHIELD</h1>
+                    </div>
+    
+                    <p class="copy">&copy Copyright 2023. Todos os direitos reservados.</p>
+    
+                </div>
+            </div>
+            
+            <!-- parte de direita -->
+            
+                <div class="plano">
+                    <div class="plano-content">
+                        <h2 class="planos-content-titulo">Teste Grátis </h2>
+                        <h3 class="planos-content-subtitulos">1 dispositivo - Windows </h3>
+                        <h4 class="planos-content-p">Inicie o uso da ferramenta <br> Datashield por um mês grátis e <br> conheca nosso produto! </h4>
+                    </div>
+
+                    <a href="#"><button class="btn">Testar</button></a>
+                </div>
+
+                <div class="plano">
+                    <h2 class="planos-titulo">Plano Mensal</h2>
+                    <img  class="planos-imagens"  src="../static/assets/images/mensal.jpg" alt="">
+                    <h3 class="planos-subtitulos">1 dispositivo - Windows </h3>
+                    <h4>Proteção contra malware <br> Monitoramento em tempo real <br> Relatorio de processos encerrados </h4>
+                    <div class="preco">
+                        <h5>R$</h5> 
+                        <h2>4,35</h2> 
+                        <h4>/mês</h4>
+                    </div>
+                    <a href="#"><button class="btn2">Baixar</button></a>
+                </div>
+
+                <div class="plano">
+                    
+                        <h2 class="planos-titulo">Plano Anual</h2>
+                        <img  class="planos-imagens"  src="../static/assets/images/anual.jpg" alt="">
+                        <h3 class="planos-subtitulos">1 dispositivo - Windows </h3>
+                        <h4>Proteção contra malware <br> Monitoramento em tempo real <br> Relatorio de processos encerrados </h4>
+                        <div class="preco"> 
+                            <h5>R$</h5> 
+                            <h2>40,80</h2> 
+                            <h4>/ano</h4>
+                        </div>
+
+                    <a href="#"><button class="btn2">Baixar</button></a>
+                    
+                </div>
+
+        </div>
+
+    </footer>
 
 
 </body>
 </html>
+

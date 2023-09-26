@@ -29,7 +29,9 @@ class Configuracoes:
     def pegar_config(self):
 
         dados = colecao_usuarios.find_one({"uuid": self.id})
-        del dados['_id']
+        if dados is not None:
+            del dados['_id']
+            
         return dados
 
 
