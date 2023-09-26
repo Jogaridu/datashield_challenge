@@ -19,6 +19,7 @@ class Configuracoes:
     def __init__(self):
         self.id = self.pegar_uuid()
 
+
     def pegar_uuid(self):
 
         mac = ':'.join(['{:02x}'.format((uuid.getnode() >> elements) & 0xff) for elements in range(2, -1, -1)])
@@ -83,5 +84,13 @@ class Configuracoes:
         self.atualizar_config({'ultima_analise': data})
         return True
 
+
+    def pegar_processos_analisados(self):
+
+        try:
+            return list(colecao_analise.find({'uuid': self.id}, {'nomeProcesso': 1, '_id': 0, 'status': 1, 'pid': 1}))
+        except ValueError:
+            return False
+        
 
 obj_configuracoes = Configuracoes()

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='assets/icon/favicon.ico') }}">
+    <title>Datashield</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/reset.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}">
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <header style="margin-bottom: 46px;">
+            <div class="cabecalho_logo">
+                <img class="logo" src="{{ url_for('static', filename='assets/images/logo-ds.svg') }}" alt="">
+                <h1>DATASHIELD</h1>
+            </div>
+            <div class="voltar">
+                <a href="/">Ir para home</a>
+                <img src="{{ url_for('static', filename='assets/images/iconseta.png') }}" alt="">
+            </div>
+        </header>
+
+        <main class="main-historico">
+            <div id="carregando" style="height: 500px;">
+                <div class="loading"></div>
+            </div>
+
+            <div id="conteudo-historico-1" class="d-none">
+                <table border="1">
+                    <thead>
+                        <tr>
+                            <th>PID</th>
+                            <th>Nome do Processo</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="processTableBody"></tbody>
+                </table>
+            </div>
+        </main>
+
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const tableBody = document.getElementById("processTableBody");
+
+            // Função para buscar os dados da API e preencher a tabela
+            function fetchProcessData() {
+
+                fetch('/api/processos')
+                    .then((response) => response.json())
+                    .then((dados) => {
+
+                        tableBody.innerHTML = "";
+
+                        dados.data.forEach((process) => {
+
+                            const row = document.createElement("tr");
+
+                            const pidCell = document.createElement("td");
+                            pidCell.textContent = "#" + process.pid;
+                            row.appendChild(pidCell);
+
+                            const nameCell = document.createElement("td");
+                            nameCell.textContent = process.nomeProcesso;
+                            row.appendChild(nameCell);
+
+                            const statusCell = document.createElement("td");
+                            statusCell.textContent = process.status;
+                            row.appendChild(statusCell);
+
+                            tableBody.appendChild(row);
+
+                        });
+
+                        document.getElementById("conteudo-historico-1").classList.remove('d-none');
+                        document.getElementById("conteudo-historico-1").classList.add('fade-in');
+                        document.getElementById("carregando").classList.add('d-none');
+
+                    })
+                    .catch((error) => {
+                        console.error("Erro ao buscar dados da API:", error);
+                    });
+            }
+
+            fetchProcessData();
+
+        });
+
+    </script>
+</body>
+
+</html>

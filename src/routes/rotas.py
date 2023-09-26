@@ -6,7 +6,7 @@ rotas = Blueprint('rotas', __name__)
 def index():
     return render_template('home.html')
 
-@rotas.route('/sobre')
-def sobre():
-    return render_template('sobre.html')
 
+@rotas.route('/historico')
+def historico():
+    return render_template('historico.html')
