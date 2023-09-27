@@ -10,10 +10,11 @@ from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
 from sklearn import tree
+import win32evtlog
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'database'))
 from conexao_db  import instanciar_processos, instanciar_analise
-import models.honeypot as honeypot
+import honeypot as honeypot
 
 # Instância do banco
 colecao_processos = instanciar_processos() # Resultado
@@ -60,6 +61,9 @@ class Monitoramento:
     evento_handler = EventoHoneypotHandler()
     id = ''
 
+    # Fila de processos
+    processos_pendentes = []
+
     def __init__(self):
         self.monitoramento_ativo = False
         self.id = self.pegar_uuid()
@@ -85,14 +89,14 @@ class Monitoramento:
         print("Observando novos processos...")
 
         # Início do HONEYPOT
-        # diretorios = honeypot.iniciar()
+        diretorios = honeypot.iniciar()
 
-        # observer = Observer()
-        # observer.start()
+        observer = Observer()
+        observer.start()
 
-        # for diretorio in diretorios:
-        #     observer.schedule(self.evento_handler, diretorio + r"\acertificados", recursive=True)
-        #     observer.schedule(self.evento_handler, diretorio + r"\zcurriculos", recursive=True)
+        for diretorio in diretorios:
+            observer.schedule(self.evento_handler, diretorio + r"\acertificados", recursive=True)
+            observer.schedule(self.evento_handler, diretorio + r"\zcurriculos", recursive=True)
 
         try:
             
@@ -101,10 +105,6 @@ class Monitoramento:
                 try:
 
                     new_process = self.process_watcher()
-                    
-                    if (self.evento_handler.pasta_modificada):
-                        os.kill(new_process.ProcessId, signal.SIGILL)
-                        break
 
                     self.analise_instancia(new_process.ProcessId, new_process)
 
@@ -161,6 +161,7 @@ class Monitoramento:
             # dados_analise["threadCount"] = int(int(processo.threadCount) > MAX_THREAD_COUNT)
             # dados_analise["priority"] = int(int(processo.priority) > MAX_PRIORITY)
             # dados_analise["privatePageCount"] = int(int(processo.privatePageCount) > MAX_PRIVATE_PAGE_COUNT)
+
             try:
                 processo_analise = psutil.Process(pid) 
                 
@@ -195,24 +196,35 @@ class Monitoramento:
                 #     processo_analise.num_threads(),
                 #     processo_analise.memory_info().private
                 # ]])
-                resposta_ml = 0
+                uso_intenso_hardware = 0
 
-                if (resposta_ml == 1):
+                # Validação inicial caso o processo seja muito malígno
+                status = self.validarResultados(dados_analise)
+
+                # Validação de integridade dos eventos
+                logs_ok = self.validar_security_logs()
+
+                # LOGS
+                print('-' * 80 + 'RESULTADO DA ANÁLISE' + '-' * 80)
+                print('A pasta está modificada: ' + str(self.evento_handler.pasta_modificada))
+                print('Qtd. valores acima do esperado (Hardware): ' + str(sum(dados_analise.values())))
+                print('Status com base no uso do hardware (Hardware): ' + str(sum(dados_analise.values())))
+                print('Resultado Machine Learning (Hardware): ' + str(uso_intenso_hardware))
+                print('Análise de eventos suspeita: ' + str(logs_ok))
+                print('-' * 200)
+
+                # Valida uso de hardware e honeypot ou eventos
+                if ((uso_intenso_hardware == 1 or status == 'ameaça') and (logs_ok == False or self.evento_handler.pasta_modificada)):
                     os.kill(pid, signal.SIGILL)
                     status = 'ameaça'
                     print(f"O Processo {processo.Name} é uma AMEAÇA.")
-                else:
-                    # Validação inicial caso o processo seja muito malígno
-                    status = self.validarResultados(pid, dados_analise)
-
-                if (status == 'ameaça'):
-                    print(f"O Processo {processo.Name} é uma AMEAÇA.")
+                    self.evento_handler.pasta_modificada = False
 
                 else:
 
                     # Loop de avaliação por dois segundos
                     tempo_inicio = time.time()
-                    dados_analise = []
+                    dados_analise = [] 
                     dados_processo_durante = []
 
                     while time.time() - tempo_inicio < 2:
@@ -244,11 +256,6 @@ class Monitoramento:
                         dados_analise.append(obj_boolean)
                         dados_processo_durante.append(obj_processo)
 
-                        status = self.validarResultados(pid, obj_boolean)
-
-                        if (status == 'ameaça'):
-                            break
-
                         time.sleep(0.5)
 
                 colecao_analise.insert_one({
@@ -272,15 +279,19 @@ class Monitoramento:
                 })
 
                 print(f"O processo: '{processo.Name}' é {status}")
+                print('-' * 200)
+                self.evento_handler.pasta_modificada = False
 
             except psutil.NoSuchProcess:
                 print("Processo não encontrado. Continuando a execução do programa.")
+                pass
 
             except PermissionError:
                 print(f"Erro de permissão. Continuando a execução do programa.")
+                pass
 
 
-    def validarResultados(self, pid, resultados):
+    def validarResultados(self, resultados):
 
         retorno = ''
 
@@ -288,9 +299,7 @@ class Monitoramento:
 
             retorno = 'ameaça'
 
-            os.kill(pid, signal.SIGILL)
-
-            print(f"AMEAÇA NEUTRALIZADA.")
+            print(f"AMEAÇA DETECTADA.")
 
         elif sum(resultados.values()) > 2:
 
@@ -352,7 +361,6 @@ class Monitoramento:
                 features = dados_existentes['features']
                 labels = dados_existentes['labels']
 
-        print(features)
         self.classif.fit(features, labels)
     
 
@@ -364,5 +372,44 @@ class Monitoramento:
 
     def status_health(self):
         return self.monitoramento_ativo
+
+
+    def validar_security_logs(self):
+
+        pontos_criticos = 0
+        lista_eventos_alvo_criticos = (1100, 1102, 104)
+        lista_eventos_alvo_alto = (4798, 4799)
+        lista_eventos_alvo = (1102, 1116, 1117, 4624, 4625, 4648, 4662, 4663, 4670, 4672, 4698, 4720, 4724, 4728, 4732, 4768, 4769, 4776, )
+
+        try:
+
+            hand = win32evtlog.OpenEventLog(None, 'Security')
+            flags = win32evtlog.EVENTLOG_BACKWARDS_READ | win32evtlog.EVENTLOG_SEQUENTIAL_READ
+            events = win32evtlog.ReadEventLog(hand, flags, 0)
+
+            for event in events:
+
+                event_id = event.EventID
+                print(f"Event ID detectado: {event_id}")
+
+                if event_id in lista_eventos_alvo_criticos:
+                    pontos_criticos += 4
+
+                elif event_id in lista_eventos_alvo_alto:
+                    pontos_criticos += 3
+
+                elif event_id in lista_eventos_alvo:
+                    pontos_criticos += 1
+
+                if pontos_criticos >= 5:
+                    break
+
+            print('Pontos críticos dos eventos: ' + str(pontos_criticos))
+            return pontos_criticos >= 5
+        
+        except Exception as e:
+            print(f"Erro ao validar eventos: {str(e)}")
+            return False
+
 
 monitoramento = Monitoramento()

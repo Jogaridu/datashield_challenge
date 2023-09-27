@@ -13,7 +13,7 @@ server.watch('app.py')
 server.watch('templates/*.html')
 server.watch('static/css/*.css')
 
-app.config['DEBUG'] = True
+app.config['DEBUG'] = False
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 app.register_blueprint(rotas)

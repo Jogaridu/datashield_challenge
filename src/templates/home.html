@@ -71,8 +71,10 @@
                                 alt="" />
                             <h3>Relatório de processos</h3>
                             <div class="more">
-                                <a href="/historico">Ver mais</a>
-                                <img src="{{ url_for('static', filename='assets/images/iconseta.png') }}" alt="" />
+                                <a href="/historico" style="display: flex; align-items: center;">
+                                    Ver mais
+                                    <img src="{{ url_for('static', filename='assets/images/iconseta.png') }}" alt="" />
+                                </a>
                             </div>
                         </div>
 
@@ -230,6 +232,5 @@
     });
 
 </script>
-<!-- <script src="{{ url_for('static', filename='js/animation.js') }}"></script> -->
 
 </html>
