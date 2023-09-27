@@ -5,6 +5,7 @@ import sys
 import time
 import json
 import uuid
+import datetime
 
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
@@ -321,6 +322,7 @@ class Monitoramento:
 
             features = []
             labels = []
+            lastday = ''
 
             for processo in list(colecao_analise.find()):
                 
@@ -345,9 +347,17 @@ class Monitoramento:
                     else:
                         labels.append(1)
 
+
+            current_date = datetime.date.today()
+
+            lastday = current_date 
+
+            print(lastday)
+
             dados_principais = {
                 "features": features,
-                "labels": labels
+                "labels": labels,
+                "lastday": lastday
             }
 
             with open(caminho_arquivo, "w") as arquivo:
@@ -360,6 +370,11 @@ class Monitoramento:
 
                 features = dados_existentes['features']
                 labels = dados_existentes['labels']
+
+                # if lastday is not None:
+                #     lastday = dados_existentes['lastday']
+                # else:
+                #     lastday.append(lastday)
 
         self.classif.fit(features, labels)
     
