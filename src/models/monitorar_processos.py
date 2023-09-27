@@ -22,22 +22,14 @@ colecao_processos = instanciar_processos() # Resultado
 colecao_analise = instanciar_analise() # Dados de análise de novo processo
 
 # Régua para uso de dados
-# MAX_HANDLE_COUNT = 1000
-# MAX_PAGE_FAULTS = 52000
-# MAX_PAGE_FILE_USAGE = 90000
-# MAX_PEAK_PAGE_FILE_USAGE = 110000
-# MAX_WORKING_SET_SIZE = 105243072
-# MAX_THREAD_COUNT = 35
-# MAX_PRIORITY = 12
-# MAX_PRIVATE_PAGE_COUNT = 70000000
-MAX_HANDLE_COUNT = 1000
-MAX_PAGE_FAULTS = 52000
-MAX_PAGE_FILE_USAGE = 201048064
-MAX_PEAK_PAGE_FILE_USAGE = 201048064
-MAX_WORKING_SET_SIZE = 150242880
-MAX_THREAD_COUNT = 20
-MAX_PRIORITY = 12
-MAX_PRIVATE_PAGE_COUNT = 70000000
+MAX_HANDLE_COUNT = 130
+MAX_PAGE_FAULTS = 4000
+MAX_PAGE_FILE_USAGE = 7010000
+MAX_PEAK_PAGE_FILE_USAGE = 7057888
+MAX_WORKING_SET_SIZE = 14458880
+MAX_THREAD_COUNT = 10
+MAX_PRIORITY = 8
+MAX_PRIVATE_PAGE_COUNT = 450000
 
 class EventoHoneypotHandler(FileSystemEventHandler):
 
@@ -154,15 +146,6 @@ class Monitoramento:
             #     "privatePageCount": 0
             # }
 
-            # dados_analise["handleCount"] = int(int(processo.handleCount) > MAX_HANDLE_COUNT)
-            # dados_analise["pageFaults"] = int(int(processo.pageFaults) > MAX_PAGE_FAULTS)
-            # dados_analise["pageFileUsage"] = int(int(processo.pageFileUsage) > MAX_PAGE_FILE_USAGE)
-            # dados_analise["peakPageFileUsage"] = int(int(processo.peakPageFileUsage) > MAX_PEAK_PAGE_FILE_USAGE)
-            # dados_analise["workingSetSize"] = int(int(processo.workingSetSize) > MAX_WORKING_SET_SIZE)
-            # dados_analise["threadCount"] = int(int(processo.threadCount) > MAX_THREAD_COUNT)
-            # dados_analise["priority"] = int(int(processo.priority) > MAX_PRIORITY)
-            # dados_analise["privatePageCount"] = int(int(processo.privatePageCount) > MAX_PRIVATE_PAGE_COUNT)
-
             try:
                 processo_analise = psutil.Process(pid) 
                 
@@ -215,13 +198,16 @@ class Monitoramento:
                 print('-' * 200)
 
                 # Valida uso de hardware e honeypot ou eventos
-                if ((uso_intenso_hardware == 1 or status == 'ameaça') and (logs_ok == False or self.evento_handler.pasta_modificada)):
+                if ((uso_intenso_hardware == 1 or status == 'ameaça') and (logs_ok == False or self.evento_handler.pasta_modificada)) or (logs_ok == False and self.evento_handler.pasta_modificada):
                     os.kill(pid, signal.SIGILL)
                     status = 'ameaça'
                     print(f"O Processo {processo.Name} é uma AMEAÇA.")
                     self.evento_handler.pasta_modificada = False
 
                 else:
+
+                    if (logs_ok == False):
+                        status = 'suspeito'
 
                     # Loop de avaliação por dois segundos
                     tempo_inicio = time.time()
