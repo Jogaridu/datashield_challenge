@@ -117,7 +117,7 @@ class Monitoramento:
 
     def analise_instancia(self, pid, processo):
 
-        processo_registrado = colecao_processos.find_one({"nomeProcesso": processo.Name, "uuid": self.id})
+        processo_registrado = colecao_processos.find_one({"nomeProcesso": processo.Name})
 
         if (processo_registrado):
             
@@ -173,22 +173,21 @@ class Monitoramento:
                     "privatePageCount": processo_analise.memory_info().private
                 }
 
-                # resposta_ml = self.classif.predict([[
-                #     processo_analise.num_handles(),
-                #     processo_analise.memory_info().num_page_faults,
-                #     processo_analise.memory_info().pagefile,
-                #     processo_analise.memory_info().peak_pagefile,
-                #     processo_analise.memory_info().rss,
-                #     processo_analise.num_threads(),
-                #     processo_analise.memory_info().private
-                # ]])
-                uso_intenso_hardware = 0
+                uso_intenso_hardware = self.classif.predict([[
+                    processo_analise.num_handles(),
+                    processo_analise.memory_info().num_page_faults,
+                    processo_analise.memory_info().pagefile,
+                    processo_analise.memory_info().peak_pagefile,
+                    processo_analise.memory_info().rss,
+                    processo_analise.num_threads(),
+                    processo_analise.memory_info().private
+                ]])
 
                 # Validação inicial caso o processo seja muito malígno
                 status = self.validarResultados(dados_analise)
 
                 # Validação de integridade dos eventos
-                logs_ok = self.validar_security_logs()
+                logs_suspeito = self.validar_security_logs()
 
                 # LOGS
                 print('-' * 80 + 'RESULTADO DA ANÁLISE' + '-' * 80)
@@ -196,11 +195,11 @@ class Monitoramento:
                 print('Qtd. valores acima do esperado (Hardware): ' + str(sum(dados_analise.values())))
                 print('Status com base no uso do hardware (Hardware): ' + str(sum(dados_analise.values())))
                 print('Resultado Machine Learning (Hardware): ' + str(uso_intenso_hardware))
-                print('Análise de eventos suspeita: ' + str(logs_ok))
+                print('Análise de eventos suspeita: ' + str(logs_suspeito))
                 print('-' * 200)
 
                 # Valida uso de hardware e honeypot ou eventos
-                if ((uso_intenso_hardware == 1 or status == 'ameaça') and (logs_ok == True or self.evento_handler.pasta_modificada)) or (logs_ok == True and self.evento_handler.pasta_modificada) or self.ameaca_eminente:
+                if ((uso_intenso_hardware == 1 or status == 'ameaça') and (logs_suspeito == True or self.evento_handler.pasta_modificada)) or (logs_suspeito == True and self.evento_handler.pasta_modificada) or self.ameaca_eminente:
 
                     os.kill(pid, signal.SIGILL)
                     parent = psutil.Process(processo_analise.ppid())
@@ -223,7 +222,7 @@ class Monitoramento:
 
                 else:
 
-                    if (logs_ok == True):
+                    if (logs_suspeito == True):
                         status = 'suspeito'
 
                     # Loop de avaliação por dois segundos
@@ -324,7 +323,6 @@ class Monitoramento:
 
             features = []
             labels = []
-            lastday = ''
 
             for processo in list(colecao_analise.find()):
                 
@@ -349,17 +347,9 @@ class Monitoramento:
                     else:
                         labels.append(1)
 
-
-            current_date = datetime.date.today()
-
-            lastday = current_date 
-
-            print(lastday)
-
             dados_principais = {
                 "features": features,
                 "labels": labels,
-                "lastday": lastday
             }
 
             with open(caminho_arquivo, "w") as arquivo:
@@ -372,11 +362,6 @@ class Monitoramento:
 
                 features = dados_existentes['features']
                 labels = dados_existentes['labels']
-
-                # if lastday is not None:
-                #     lastday = dados_existentes['lastday']
-                # else:
-                #     lastday.append(lastday)
 
         self.classif.fit(features, labels)
     
@@ -395,9 +380,9 @@ class Monitoramento:
 
         qtd_criticos = 0
         pontos_criticos = 0
-        lista_eventos_alvo_criticos = (1100, 1102, 104, 5379)
+        lista_eventos_alvo_criticos = (1100, 1102, 104, 5379, 1116, 1117)
         lista_eventos_alvo_alto = (4798, 4799)
-        lista_eventos_alvo = (1102, 1116, 1117, 4624, 4625, 4648, 4662, 4663, 4670, 4672, 4698, 4720, 4724, 4728, 4732, 4768, 4769, 4776)
+        lista_eventos_alvo = (1102, 4624, 4625, 4648, 4662, 4663, 4670, 4672, 4698, 4720, 4724, 4728, 4732, 4768, 4769, 4776)
 
         try:
 
