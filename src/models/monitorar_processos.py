@@ -55,7 +55,7 @@ class Monitoramento:
     id = ''
 
     # Fila de processos
-    processos_pendentes = []
+    ameaca_eminente = False
 
     def __init__(self):
         self.monitoramento_ativo = False
@@ -200,11 +200,26 @@ class Monitoramento:
                 print('-' * 200)
 
                 # Valida uso de hardware e honeypot ou eventos
-                if ((uso_intenso_hardware == 1 or status == 'ameaça') and (logs_ok == True or self.evento_handler.pasta_modificada)) or (logs_ok == True and self.evento_handler.pasta_modificada):
+                if ((uso_intenso_hardware == 1 or status == 'ameaça') and (logs_ok == True or self.evento_handler.pasta_modificada)) or (logs_ok == True and self.evento_handler.pasta_modificada) or self.ameaca_eminente:
+
                     os.kill(pid, signal.SIGILL)
+                    parent = psutil.Process(pid.ppid())
+
                     status = 'ameaça'
                     print(f"O Processo {processo.Name} é uma AMEAÇA.")
+
+                    # Se for identificado um processo filho, mata o processo pai
+                    if parent.pid != pid:
+                        while True:
+                            print('Processo PAI sendo encerrado: ' + parent.name())
+                            grandparent = psutil.Process(parent.ppid())
+                            os.kill(parent.info['pid'], signal.SIGILL)
+                            if parent.pid == grandparent.pid:
+                                break
+                            parent = grandparent
+
                     self.evento_handler.pasta_modificada = False
+                    self.ameaca_eminente = False
 
                 else:
 
@@ -378,10 +393,11 @@ class Monitoramento:
 
     def validar_security_logs(self):
 
+        qtd_criticos = 0
         pontos_criticos = 0
-        lista_eventos_alvo_criticos = (1100, 1102, 104)
+        lista_eventos_alvo_criticos = (1100, 1102, 104, 5379)
         lista_eventos_alvo_alto = (4798, 4799)
-        lista_eventos_alvo = (1102, 1116, 1117, 4624, 4625, 4648, 4662, 4663, 4670, 4672, 4698, 4720, 4724, 4728, 4732, 4768, 4769, 4776, )
+        lista_eventos_alvo = (1102, 1116, 1117, 4624, 4625, 4648, 4662, 4663, 4670, 4672, 4698, 4720, 4724, 4728, 4732, 4768, 4769, 4776)
 
         try:
 
@@ -396,6 +412,7 @@ class Monitoramento:
 
                 if event_id in lista_eventos_alvo_criticos:
                     pontos_criticos += 4
+                    qtd_criticos += 1
 
                 elif event_id in lista_eventos_alvo_alto:
                     pontos_criticos += 3
@@ -405,6 +422,10 @@ class Monitoramento:
 
                 if pontos_criticos >= 5:
                     break
+
+            if qtd_criticos > 2:
+                self.ameaca_eminente = True
+                print('AMEAÇA EMINENTE, COMBATENDO...')
 
             print('Pontos críticos dos eventos: ' + str(pontos_criticos))
             return pontos_criticos >= 5
