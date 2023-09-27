@@ -203,7 +203,7 @@ class Monitoramento:
                 if ((uso_intenso_hardware == 1 or status == 'ameaça') and (logs_ok == True or self.evento_handler.pasta_modificada)) or (logs_ok == True and self.evento_handler.pasta_modificada) or self.ameaca_eminente:
 
                     os.kill(pid, signal.SIGILL)
-                    parent = psutil.Process(pid.ppid())
+                    parent = psutil.Process(processo_analise.ppid())
 
                     status = 'ameaça'
                     print(f"O Processo {processo.Name} é uma AMEAÇA.")
