@@ -213,7 +213,7 @@ class Monitoramento:
                         while True:
                             print('Processo PAI sendo encerrado: ' + parent.name())
                             grandparent = psutil.Process(parent.ppid())
-                            os.kill(parent.info['pid'], signal.SIGILL)
+                            os.kill(parent.pid, signal.SIGILL)
                             if parent.pid == grandparent.pid:
                                 break
                             parent = grandparent
