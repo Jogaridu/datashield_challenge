@@ -147,6 +147,8 @@ class Monitoramento:
             # }
 
             try:
+                dados_processo_durante = []
+
                 processo_analise = psutil.Process(pid) 
                 
                 dados_analise = {
@@ -198,7 +200,7 @@ class Monitoramento:
                 print('-' * 200)
 
                 # Valida uso de hardware e honeypot ou eventos
-                if ((uso_intenso_hardware == 1 or status == 'ameaça') and (logs_ok == False or self.evento_handler.pasta_modificada)) or (logs_ok == False and self.evento_handler.pasta_modificada):
+                if ((uso_intenso_hardware == 1 or status == 'ameaça') and (logs_ok == True or self.evento_handler.pasta_modificada)) or (logs_ok == True and self.evento_handler.pasta_modificada):
                     os.kill(pid, signal.SIGILL)
                     status = 'ameaça'
                     print(f"O Processo {processo.Name} é uma AMEAÇA.")
@@ -206,13 +208,12 @@ class Monitoramento:
 
                 else:
 
-                    if (logs_ok == False):
+                    if (logs_ok == True):
                         status = 'suspeito'
 
                     # Loop de avaliação por dois segundos
                     tempo_inicio = time.time()
                     dados_analise = [] 
-                    dados_processo_durante = []
 
                     while time.time() - tempo_inicio < 2:
                             
@@ -243,7 +244,7 @@ class Monitoramento:
                         dados_analise.append(obj_boolean)
                         dados_processo_durante.append(obj_processo)
 
-                        time.sleep(0.5)
+                        time.sleep(0.2)
 
                 colecao_analise.insert_one({
                     'nomeProcesso': processo.Name,
