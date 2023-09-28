@@ -1,4 +1,4 @@
-# DataShield - Challenge
+# DataShield - Challenge 2023
 
 ## Repositório em EN-US
 [Link para o GitHub]
@@ -7,10 +7,10 @@
 Challenge realizado com o intuito de colocar em prática todos os conhecimentos aprendidos durante o primeiro ano do curso de Defesa Cibernética, incluindo programação, sistemas operacionais, e análise de malwares. 
 
 # Integrantes
-- Eduardo
-- Matheus
-- Jorge
-- Pedro
+- Eduardo dos Santos Almeida
+- Jorge Gabriel Ricci Dutra
+- Matheus Rosa Colombo
+- Pedro Augusto Buhrer Pereira
   
 ## Desafio
 O desafio consiste em desenvolver um software capaz de detectar e mitigar um ransomware de mercado que será desenvolvido pela empresa parceira Fortinet. Alem disso devemos criar uma startup com nome, identidade, logo, etc.  
@@ -27,7 +27,20 @@ Segundo a Forbes, em 2021, 80% das organizações foram atingidas por um ataque 
 
 ## A Datashield
 
-A partir desse desafio, a Datashield foi inventada e trabalhada durante o ano todo com o intuito de realizar e resolver o desafio de uma maneira impecavel. 
+### Renovando o que já existe com ideias frescas 
+
+A partir desse desafio, a Datashield foi inventada e trabalhada durante o ano todo com o intuito de realizar e resolver o desafio de uma maneira impecavel.
+
+### Proteja seus dados, conserve suas histórias memoráveis
+
+## Pilares e Arquitetura
+
+Projeto combina uma interface WEB baseada na arquitetura MVC (Model-View-Controller) com o uso do framework Flask com banco de dados em nuvem.
+
+- Machine Learning
+- Honeypot
+- Análise e monitoramento de processos 
+- Monitoramento dos logs de eventos do Windows
 
 ## Passo a passo para executar o programa
 
@@ -42,33 +55,32 @@ cd datashield_challenge
 ### 3° Passo - Instale as bibliotecas
 
 ```
-pip install .
+pip install nomedabiblioteca
 ```
 
 ### 4° Passo - Execute o comando abaixo para abrir o programa Python
 ```
-python3 
+python main.py ou python3 main.py
 ```
 ### 5° Passo - Ligar monitoramento do endpoint 
-![Imagem do programa]
+<img src="C:\Área de Trabalho\honeypot_monitor\datashield_challenge\src\static\assets\images\imagem-interface.png">
 
+### Lista de bibliotecas a serem instaladas: 
 
-## Dashboard de avaliação de performance 
-
+- ctypes                                           - signal
+- datetime                                         - socket
+- flask                                            - subprocess
+- json                                             - sys
+- livereload                                       - time
+- locale                                           - urllib.parse 
+- os                                               - uuid
+- psutil                                           - webview
+- pymongo                                          - winshell
+- pythoncom                                        - win32con
+- server                                           - wmi
 
 ### Ambiente de teste de ransomwares
 Sistema operacional: Windows 10
 Processador: Intel Pentium G4560 3.5Ghz
 RAM: 4GB
 SSD: 128GB
-
-
-
-
-
-
-# Configurar projeto
-Execute o comando abaixo para utilizar o ambiente virtual do python.
-```
-venv\Scripts\activate
-```
