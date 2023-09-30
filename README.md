@@ -123,7 +123,7 @@ When ransomware gains access to the device, it encrypts the entire operating sys
 
 According to Forbes, in 2021, 80% of organizations were hit by a ransomware attack.
 
-## A Datashield
+## The Datashield
 
 ### Renewing what already exists with fresh ideas
 
