@@ -1,7 +1,6 @@
 # DataShield - Challenge 2023
 
-## Repositório em EN-US
-[Link para o GitHub]
+## PT-BR
 
 ## Introdução
 Challenge realizado com o intuito de colocar em prática todos os conhecimentos aprendidos durante o primeiro ano do curso de Defesa Cibernética, incluindo programação, sistemas operacionais, e análise de malwares. 
@@ -13,7 +12,7 @@ Challenge realizado com o intuito de colocar em prática todos os conhecimentos 
 - Pedro Augusto Buhrer Pereira
   
 ## Desafio
-O desafio consiste em desenvolver um software capaz de detectar e mitigar um ransomware de mercado que será desenvolvido pela empresa parceira Fortinet. Alem disso devemos criar uma startup com nome, identidade, logo, etc.  
+O desafio consiste em desenvolver um software capaz de detectar e mitigar um ransomware de mercado que será desenvolvido pela empresa parceira PRIDE Security. Alem disso devemos criar uma startup com nome, identidade, logo, etc.  
 
 Realizamos uma pesquisa aprofundada no assunto, na qual nos ensinou o que um detector de malwares precisava e quais estrategias deveriamos utilizar. Desenvolvemos uma aplicação com interface gráfica, um site para download de nossa ferramenta, e a criação de um ambiente sanbox para teste usando uma maquina virtual Windows 10.
 
@@ -95,5 +94,103 @@ python main.py ou python3 main.py
 ### Ambiente de teste de ransomwares
 Sistema operacional: Windows 10 <br>
 Processador: Intel Pentium G4560 3.5Ghz <br>
+RAM: 4GB <br>
+SSD: 128GB <br>
+
+
+# DataShield - Challenge 2023
+
+## EN-US
+
+## Introduction
+Challenge carried out with the objective of putting into practice all the knowledge learned during the first year of the Cyber Defense course, including programming, operating systems, and malware analysis. 
+
+# Members
+- Eduardo dos Santos Almeida
+- Jorge Gabriel Ricci Dutra
+- Matheus Rosa Colombo
+- Pedro Augusto Buhrer Pereira
+  
+## Challenge
+The challenge is to develop software capable of detecting and mitigating market ransomware that will be developed by partner company PRIDE Security. Furthermore, we must create a startup with a name, identity, logo, etc.  
+
+We carried out in-depth research on the subject, which taught us what a malware detector needed and what strategies we should use. We developed an application with a graphical interface, a website to download our tool, and created a sanbox environment for testing using a Windows 10 virtual machine.
+
+## What are Ransomware?
+ransomware is a type of malware as well as viruses, worms, spyware and trojans.
+
+When ransomware gains access to the device, it encrypts the entire operating system or just individual files and then a ransom is demanded from the victims, normally a large amount is requested and in cryptocurrencies.
+
+According to Forbes, in 2021, 80% of organizations were hit by a ransomware attack.
+
+## A Datashield
+
+### Renewing what already exists with fresh ideas
+
+Based on this challenge, Datashield was invented and worked on throughout the year with the objective of carrying out and solving the challenge in an impeccable way.
+
+### Protect your data, preserve your memorable stories
+
+## Pillars and Architecture
+
+Project combines a WEB interface based on the MVC (Model-View-Controller) architecture with the use of the Flask framework with a cloud database.
+- Machine Learning
+- Honeypot
+- Process analysis and monitoring
+- Monitoring Windows event logs
+
+## Step by step to run the program
+
+### 1° Step - Open the terminal
+
+### 2° Step - Get the project from github
+To obtain the files, type the command: 
+```
+git clone (https://github.com/Jogaridu/datashield_challenge)
+cd datashield_challenge
+```
+### 3° Step - Install the libraries
+
+```
+pip install libraryname
+```
+
+#### List of libraries to be installed:
+Name   | Description
+:------: | :-----------:
+ctypes | Library used to make function calls in shared libraries (DLLs) written in C and to define C data types in Python.
+signal | Library used to manipulate system signals, such as process interruptions, allowing control of behavior in specific situations.
+datetime | Library used to work with dates and times, allowing the creation, manipulation and formatting of date and time objects.
+socket | Library used for network communication, allowing the creation of sockets to establish connections between processes on different machines.
+flask | Python web framework used to build web applications, offering tools to create RESTful APIs and simple web applications.
+subprocess | Library used to create, manage and interact with secondary processes from a Python program.
+json | Library used to encode and decode data in JSON format, commonly used for data interoperability.
+sys | Library that provides access to system-specific functionality, such as command-line arguments and information about the version of Python running.
+livereload | Used to create a development server that automatically reloads the browser when source files are modified.
+time | Library that provides functions to measure time and delay code execution.
+locale | Library used for internationalization and localization of applications, allowing the formatting of numbers, dates and currencies according to regional settings.
+urllib.parse | Used to parse URLs and perform URL-related operations, such as constructing queries.
+os | Library that provides functions for interacting with the operating system, such as manipulating directories, executing commands, and checking files.
+uuid | Library used to generate universally unique identifiers (UUIDs).
+psutil | Library that allows you to obtain system information, such as information about running processes, CPU and memory usage.
+webview | Used to create web-based graphical user interfaces embedded in desktop applications.
+pymongo | Python driver for MongoDB, allowing interaction with MongoDB databases from Python code.
+winshell | Used to interact with the Windows desktop environment, allowing operations such as creating shortcuts.
+pythoncom | Used to interact with the COM (Component Object Model) infrastructure on Windows systems.
+win32con | Provides Windows system constants for use in API calls.
+server | It is not a recognized standard Python library. It may be specific to a particular project or application.
+wmi | Used to interact with Windows Management Instrumentation (WMI), allowing access to Windows system information and settings.
+
+### 4° Step – Run the command below to open the Python program
+```
+python main.py ou python3 main.py
+```
+### 5° Step - Turn on endpoint monitoring
+
+<img src="https://datashield.avalontech.net.br/static/assets/images/interface.png" />
+
+### Ransomware testing environment
+Operating system: Windows 10 <br>
+Processor: Intel Pentium G4560 3.5Ghz <br>
 RAM: 4GB <br>
 SSD: 128GB <br>
